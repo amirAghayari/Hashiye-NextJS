@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# سیستم مقالات دانشجویی
 
-## Getting Started
+یک وب‌سایت کامل برای مدیریت مقالات دانشجویی با Next.js 15، MongoDB، و Server Actions.
 
-First, run the development server:
+## ویژگی‌ها
+
+- ✅ ثبت نام و ورود کاربران (دانشجو/استاد)
+- ✅ ایجاد، ویرایش، و حذف مقالات توسط دانشجویان
+- ✅ نمره‌دهی به مقالات توسط اساتید
+- ✅ نمایش میانگین نمرات و نظرات اساتید
+- ✅ دسته‌بندی و برچسب‌گذاری مقالات
+- ✅ رابط کاربری فارسی با RTL پشتیبانی
+- ✅ طراحی مدرن با shadcn/ui و Tailwind CSS
+- ✅ اعتبارسنجی فرم‌ها با Zod و React Hook Form
+
+## تکنولوژی‌های استفاده شده
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Backend**: Next.js Server Actions
+- **Database**: MongoDB with Mongoose
+- **Validation**: Zod, React Hook Form
+- **UI**: shadcn/ui, Tailwind CSS, Lucide Icons
+- **Authentication**: JWT cookies
+- **Font**: Vazirmatn (فارسی)
+
+## راه‌اندازی پروژه
+
+### ۱. نصب وابستگی‌ها
+
+```bash
+npm install
+```
+
+### ۲. تنظیم متغیرهای محیطی
+
+یک فایل `.env.local` در ریشه پروژه ایجاد کرده و متغیرهای زیر را اضافه کنید:
+
+```env
+# MongoDB Connection String
+MONGODB_URI="mongodb://localhost:27017/student-articles"
+
+# JWT Secret Key
+JWT_SECRET="your-super-secret-jwt-key-here"
+```
+
+### ۳. راه‌اندازی دیتابیس
+
+مطمئن شوید که MongoDB روی سیستم شما نصب و در حال اجرا است.
+
+### ۴. اجرای پروژه
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+بعد از اجرای پروژه، به آدرس [http://localhost:3000](http://localhost:3000) بروید.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ساختار پروژه
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+students-articles/
+├── app/                    # صفحات Next.js
+│   ├── auth/              # صفحات احراز هویت
+│   ├── dashboard/          # داشبورد اصلی
+│   ├── articles/          # مدیریت مقالات
+│   └── grades/             # نمره‌دهی اساتید
+├── actions/               # Server Actions
+├── components/            # کامپوننت‌های React
+│   └── ui/               # کامپوننت‌های shadcn/ui
+├── lib/                   # کتابخانه‌های کمکی
+├── models/                # مدل‌های Mongoose
+└── public/               # فایل‌های استاتیک
+```
 
-## Learn More
+## نقش‌های کاربری
 
-To learn more about Next.js, take a look at the following resources:
+### دانشجو (Student)
+- ثبت نام و ورود به سیستم
+- ایجاد مقاله جدید
+- ویرایش و حذف مقالات خود
+- مشاهده نمرات و نظرات اساتید
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### استاد (Professor)
+- ثبت نام و ورود به سیستم
+- مشاهده تمام مقالات دانشجویان
+- نمره‌دهی به مقالات (۰ تا ۲۰)
+- افزودن توضیحات برای نمرات
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## نمره‌دهی
 
-## Deploy on Vercel
+- نمرات از ۰ تا ۲۰ قابل ثبت هستند
+- میانگین نمرات به صورت خودکار محاسبه می‌شود
+- هر استاد می‌تواند به هر مقاله فقط یک نمره بدهد
+- استادان می‌توانند توضیحات خود را برای نمرات ثبت کنند
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## دسته‌بندی مقالات
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- کامپیوتر
+- مهندسی
+- علوم پایه
+- پزشکی
+- علوم انسانی
+- هنر
+- سایر
