@@ -21,6 +21,7 @@ export default function LoginPage() {
     const result = await login(formData);
     
     if (result.success) {
+      localStorage.setItem('user', JSON.stringify(result.user));
       router.push('/dashboard');
     } else {
       setError(result.error || 'خطا در ورود به سیستم');

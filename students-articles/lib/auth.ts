@@ -1,3 +1,4 @@
+
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '@/models/User';
@@ -53,7 +54,7 @@ export async function createUser(userData: {
   
   return {
     user: {
-      id: user._id,
+      id: user._id.toString(),
       fullName: user.fullName,
       email: user.email,
       role: user.role,
@@ -81,7 +82,7 @@ export async function authenticateUser(email: string, password: string) {
   
   return {
     user: {
-      id: user._id,
+      id: user._id.toString(),
       fullName: user.fullName,
       email: user.email,
       role: user.role,

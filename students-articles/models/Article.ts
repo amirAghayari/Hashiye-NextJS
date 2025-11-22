@@ -1,5 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Model } from 'mongoose';
 
+// اینترفیس Grade
 export interface IGrade {
   professor: mongoose.Types.ObjectId;
   score: number;
@@ -7,6 +8,7 @@ export interface IGrade {
   gradedAt: Date;
 }
 
+// اینترفیس Article به همراه متدهای Document
 export interface IArticle extends Document {
   title: string;
   content: string;
@@ -19,6 +21,7 @@ export interface IArticle extends Document {
   updatedAt: Date;
 }
 
+// اسکیمای نمرات
 const gradeSchema = new Schema<IGrade>({
   professor: {
     type: Schema.Types.ObjectId,
@@ -40,8 +43,9 @@ const gradeSchema = new Schema<IGrade>({
     type: Date,
     default: Date.now
   }
-}, { _id: false });
+}, { _id: false }); // _id برای ساب‌داکیومنت معمولا نیاز نیست مگر اینکه بخواهید جداگانه به آن ارجاع دهید
 
+// اسکیمای مقاله
 const articleSchema = new Schema<IArticle>({
   title: {
     type: String,
@@ -58,8 +62,9 @@ const articleSchema = new Schema<IArticle>({
   category: {
     type: String,
     required: [true, 'دسته‌بندی الزامی است'],
+    // فاصله اضافی در ' پزشکی' را حذف کردم
     enum: {
-      values: ['کامپیوتر', 'مهندسی', 'علوم پایه', ' پزشکی', 'علوم انسانی', 'هنر', 'سایر'],
+      values: ['کامپیوتر', 'مهندسی', 'علوم پایه', 'پزشکی', 'علوم انسانی', 'هنر', 'سایر'],
       message: 'دسته‌بندی انتخاب شده معتبر نیست'
     },
     trim: true
@@ -85,19 +90,28 @@ const articleSchema = new Schema<IArticle>({
   timestamps: true
 });
 
+// ایندکس‌گذاری برای جستجوی سریع‌تر
 articleSchema.index({ author: 1 });
 articleSchema.index({ category: 1 });
 articleSchema.index({ averageScore: -1 });
 articleSchema.index({ createdAt: -1 });
 
-articleSchema.pre('save', function(next) {
-  if (this.grades && this.grades.length > 0) {
-    const totalScore = this.grades.reduce((sum, grade) => sum + grade.score, 0);
-    this.averageScore = totalScore / this.grades.length;
-  } else {
-    this.averageScore = 0;
+// میدل‌ور محاسبه میانگین قبل از ذخیره
+articleSchema.pre('save', function (next) {
+  // فقط اگر نمرات تغییر کرده‌اند محاسبه را انجام بده (برای پرفورمنس)
+  if (this.isModified('grades')) {
+    if (this.grades && this.grades.length > 0) {
+      const totalScore = this.grades.reduce((sum, grade) => sum + grade.score, 0);
+      this.averageScore = totalScore / this.grades.length;
+    } else {
+      this.averageScore = 0;
+    }
   }
   next();
 });
 
-export const Article = mongoose.models.Article || mongoose.model<IArticle>('Article', articleSchema);
+// نکته مهم برای Next.js:
+// بررسی می‌کنیم که آیا مدل قبلاً ساخته شده است یا خیر تا از خطای OverwriteModelError جلوگیری کنیم.
+const Article = (mongoose.models.Article as Model<IArticle>) || mongoose.model<IArticle>('Article', articleSchema);
+
+export default Article;

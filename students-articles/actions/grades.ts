@@ -1,11 +1,11 @@
 'use server';
 
-import { Article } from '@/models/Article';
 import { User } from '@/models/User';
 import connectDB from '@/lib/mongoose';
 import { GradeSchema } from '@/lib/validations';
 import { verifyToken } from '@/lib/auth';
 import { cookies } from 'next/headers';
+import Article from '@/models/Article';
 
 async function getCurrentUser() {
   const token = cookies().get('auth-token')?.value;

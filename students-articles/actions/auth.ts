@@ -17,7 +17,9 @@ export async function register(formData: FormData) {
 
     const result = await createUser(validatedData);
     
-    cookies().set('auth-token', result.token, {
+   const cookieStore = await cookies()
+
+    cookieStore.set('auth-token', result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -40,7 +42,9 @@ export async function login(formData: FormData) {
 
     const result = await authenticateUser(validatedData.email, validatedData.password);
     
-    cookies().set('auth-token', result.token, {
+     const cookieStore = await cookies(); // ✔ باید await شود
+
+    cookieStore.set('auth-token', result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -55,6 +59,8 @@ export async function login(formData: FormData) {
 }
 
 export async function logout() {
-  cookies().delete('auth-token');
+  const cookieStore = await cookies();
+
+  cookieStore.delete('auth-token');
   return { success: true };
 }

@@ -21,6 +21,7 @@ export default function RegisterPage() {
     const result = await register(formData);
     
     if (result.success) {
+      localStorage.setItem('user', JSON.stringify(result.user));
       router.push('/dashboard');
     } else {
       setError(result.error || 'خطا در ثبت نام');

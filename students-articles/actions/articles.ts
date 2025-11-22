@@ -1,14 +1,15 @@
 'use server';
 
-import { Article } from '@/models/Article';
 import { User } from '@/models/User';
 import connectDB from '@/lib/mongoose';
 import { ArticleSchema } from '@/lib/validations';
 import { verifyToken } from '@/lib/auth';
 import { cookies } from 'next/headers';
+import Article from '@/models/Article';
 
 async function getCurrentUser() {
-  const token = cookies().get('auth-token')?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get('auth-token')?.value;
   if (!token) {
     throw new Error('کاربر وارد نشده است');
   }
@@ -39,19 +40,19 @@ export async function createArticle(formData: FormData) {
       title: formData.get('title'),
       content: formData.get('content'),
       category: formData.get('category'),
-      tags: formData.get('tags') ? JSON.parse(formData.get('tags') as string[] : []
+      tags: formData.get('tags') ? JSON.parse(formData.get('tags') as string) : []
     });
 
     await connectDB();
     
     const article = new Article({
       ...validatedData,
-      author: user._id
+      author: user._id.toString()
     });
     
     await article.save();
     
-    return { success: true, article };
+    return { success: true, articleId: article._id.toString() };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -124,7 +125,7 @@ export async function updateArticle(id: string, formData: FormData) {
       title: formData.get('title') || undefined,
       content: formData.get('content') || undefined,
       category: formData.get('category') || undefined,
-      tags: formData.get('tags') ? JSON.parse(formData.get('tags') as string[]) : undefined
+      tags: formData.get('tags') ? JSON.parse(formData.get('tags') as string) : undefined
     });
     
     Object.assign(article, validatedData);
