@@ -1,0 +1,69 @@
+import { z } from "zod";
+
+export const ArticleSchema = {
+  create: z.object({
+    title: z
+      .string()
+      .min(5, "عنوان مقاله باید حداقل ۵ کاراکتر باشد")
+      .max(200, "عنوان مقاله نباید بیشتر از ۲۰۰ کاراکتر باشد"),
+    content: z
+      .string()
+      .min(100, "محتوای مقاله باید حداقل ۱۰۰ کاراکتر باشد")
+      .max(10000, "محتوای مقاله نباید بیشتر از ۱۰۰۰۰ کاراکتر باشد"),
+    category: z.enum(
+      [
+        "کامپیوتر",
+        "مهندسی",
+        "علوم پایه",
+        "پزشکی",
+        "علوم انسانی",
+        "هنر",
+        "سایر",
+      ],
+      {
+        message: "دسته‌بندی انتخاب شده معتبر نیست",
+      }
+    ),
+    tags: z
+      .array(z.string().max(50, "هر برچسب نباید بیشتر از ۵۰ کاراکتر باشد"))
+      .max(10, "حداکثر ۱۰ برچسب می‌توانید وارد کنید")
+      .optional()
+      .default([]),
+  }),
+
+  update: z.object({
+    title: z
+      .string()
+      .min(5, "عنوان مقاله باید حداقل ۵ کاراکتر باشد")
+      .max(200, "عنوان مقاله نباید بیشتر از ۲۰۰ کاراکتر باشد")
+      .optional(),
+    content: z
+      .string()
+      .min(100, "محتوای مقاله باید حداقل ۱۰۰ کاراکتر باشد")
+      .max(10000, "محتوای مقاله نباید بیشتر از ۱۰۰۰۰ کاراکتر باشد")
+      .optional(),
+    category: z
+      .enum(
+        [
+          "کامپیوتر",
+          "مهندسی",
+          "علوم پایه",
+          "پزشکی",
+          "علوم انسانی",
+          "هنر",
+          "سایر",
+        ],
+        {
+          message: "دسته‌بندی انتخاب شده معتبر نیست",
+        }
+      )
+      .optional(),
+    tags: z
+      .array(z.string().max(50, "هر برچسب نباید بیشتر از ۵۰ کاراکتر باشد"))
+      .max(10, "حداکثر ۱۰ برچسب می‌توانید وارد کنید")
+      .optional(),
+  }),
+};
+
+export type CreateArticleInput = z.infer<typeof ArticleSchema.create>;
+export type UpdateArticleInput = z.infer<typeof ArticleSchema.update>;

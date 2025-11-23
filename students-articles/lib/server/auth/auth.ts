@@ -1,21 +1,23 @@
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { User } from "@/models/User";
+import connectDB from "./server/mongoose";
 
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { User } from '@/models/User';
-import connectDB from './mongoose';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key";
 
 export async function hashPassword(password: string): Promise<string> {
   return await bcrypt.hash(password, 12);
 }
 
-export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  hashedPassword: string
+): Promise<boolean> {
   return await bcrypt.compare(password, hashedPassword);
 }
 
 export function generateToken(userId: string): string {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: "7d" });
 }
 
 export function verifyToken(token: string): { userId: string } | null {
@@ -30,28 +32,28 @@ export async function createUser(userData: {
   fullName: string;
   email: string;
   password: string;
-  role: 'student' | 'professor';
+  role: "student" | "professor";
   university: string;
   field: string;
 }) {
   await connectDB();
-  
+
   const existingUser = await User.findOne({ email: userData.email });
   if (existingUser) {
-    throw new Error('کاربری با این ایمیل از قبل وجود دارد');
+    throw new Error("کاربری با این ایمیل از قبل وجود دارد");
   }
-  
+
   const hashedPassword = await hashPassword(userData.password);
-  
+
   const user = new User({
     ...userData,
-    password: hashedPassword
+    password: hashedPassword,
   });
-  
+
   await user.save();
-  
+
   const token = generateToken(user._id.toString());
-  
+
   return {
     user: {
       id: user._id.toString(),
@@ -59,27 +61,27 @@ export async function createUser(userData: {
       email: user.email,
       role: user.role,
       university: user.university,
-      field: user.field
+      field: user.field,
     },
-    token
+    token,
   };
 }
 
 export async function authenticateUser(email: string, password: string) {
   await connectDB();
-  
+
   const user = await User.findOne({ email });
   if (!user) {
-    throw new Error('ایمیل یا رمز عبور اشتباه است');
+    throw new Error("ایمیل یا رمز عبور اشتباه است");
   }
-  
+
   const isValid = await verifyPassword(password, user.password);
   if (!isValid) {
-    throw new Error('ایمیل یا رمز عبور اشتباه است');
+    throw new Error("ایمیل یا رمز عبور اشتباه است");
   }
-  
+
   const token = generateToken(user._id.toString());
-  
+
   return {
     user: {
       id: user._id.toString(),
@@ -87,8 +89,8 @@ export async function authenticateUser(email: string, password: string) {
       email: user.email,
       role: user.role,
       university: user.university,
-      field: user.field
+      field: user.field,
     },
-    token
+    token,
   };
 }
