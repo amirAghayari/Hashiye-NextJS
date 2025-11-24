@@ -1,6 +1,7 @@
 "use server";
 
 import { createUser, authenticateUser } from "@/lib/server/auth/auth";
+import connectDB from "@/lib/server/mongoose";
 import { UserSchema } from "@/lib/validations/userValidation";
 import { cookies } from "next/headers";
 
@@ -15,6 +16,8 @@ export async function register(formData: FormData) {
   };
 
   try {
+    await connectDB();
+
     const validatedData = UserSchema.register.parse(data);
 
     const result = await createUser(validatedData);

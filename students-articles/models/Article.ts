@@ -106,7 +106,6 @@ articleSchema.index({ category: 1 });
 articleSchema.index({ averageScore: -1 });
 articleSchema.index({ createdAt: -1 });
 
-// TODO
 articleSchema.pre("save", function (next) {
   if (this.isModified("grades")) {
     if (this.grades && this.grades.length > 0) {

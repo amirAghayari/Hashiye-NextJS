@@ -11,30 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getArticles } from "@/actions/articles";
+import { Article } from "@/types/article";
 
-interface Article {
-  _id: string;
-  title: string;
-  content: string;
-  category: string;
-  author: {
-    fullName: string;
-    university: string;
-    field: string;
-  };
-  grades: Array<{
-    professor: {
-      fullName: string;
-    };
-    score: number;
-    comment?: string;
-    gradedAt: string;
-  }>;
-  averageScore: number;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-}
 
 export default function DashboardPage() {
   const [articles, setArticles] = useState<Article[]>([]);

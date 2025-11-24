@@ -1,32 +1,10 @@
 "use server";
 
-import { User } from "@/models/User";
 import connectDB from "@/lib/server/mongoose";
-import { cookies } from "next/headers";
 import Article from "@/models/Article";
 import { ArticleSchema } from "@/lib/validations/articleValidation";
-import { verifyToken } from "@/lib/server/auth/auth";
+import { getCurrentUser } from "@/lib/server/getCurrentUser";
 
-async function getCurrentUser() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth-token")?.value;
-  if (!token) {
-    throw new Error("کاربر وارد نشده است");
-  }
-
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    throw new Error("توکن نامعتبر است");
-  }
-
-  await connectDB();
-  const user = await User.findById(decoded.userId);
-  if (!user) {
-    throw new Error("کاربر یافت نشد");
-  }
-
-  return user;
-}
 
 export async function createArticle(formData: FormData) {
   try {

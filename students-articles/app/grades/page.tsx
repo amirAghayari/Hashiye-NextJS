@@ -14,32 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { getArticlesForGrading, gradeArticle } from "@/actions/grades";
+import { Article } from "@/types/article";
 
-interface Article {
-  _id: string;
-  title: string;
-  content: string;
-  category: string;
-  author: {
-    _id: string;
-    fullName: string;
-    university: string;
-    field: string;
-  };
-  grades: Array<{
-    professor: {
-      _id: string;
-      fullName: string;
-    };
-    score: number;
-    comment?: string;
-    gradedAt: string;
-  }>;
-  averageScore: number;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+
 
 export default function GradesPage() {
   const [articles, setArticles] = useState<Article[]>([]);

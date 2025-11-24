@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "@/models/User";
-import connectDB from "./server/mongoose";
+import connectDB from "../mongoose";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key";
 

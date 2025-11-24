@@ -16,34 +16,8 @@ import {
   deleteArticle,
 } from "@/actions/articles";
 import { gradeArticle } from "@/actions/grades";
+import { Article } from "@/types/article";
 
-// TODO: یه فایل برای اینترفیس ها بزن
-interface Article {
-  _id: string;
-  title: string;
-  content: string;
-  category: string;
-  author: {
-    _id: string;
-    fullName: string;
-    university: string;
-    field: string;
-  };
-  grades: Array<{
-    _id: string;
-    professor: {
-      _id: string;
-      fullName: string;
-    };
-    score: number;
-    comment?: string;
-    gradedAt: string;
-  }>;
-  averageScore: number;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-}
 
 // TODO : دیتارو داری با یوز افکت میگیری احمق اشتباهه اینطوری
 
