@@ -1,6 +1,12 @@
-import LoginForm from '@/components/auth/LoginForm';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
+import LoginForm from "@/components/auth/LoginForm";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -13,11 +19,14 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm  />
+          <LoginForm />
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-600">
-              حساب کاربری ندارید؟{' '}
-              <Link href="/auth/register" className="text-blue-600 hover:text-blue-500">
+              حساب کاربری ندارید؟
+              <Link
+                href="/auth/register"
+                className="text-blue-600 hover:text-blue-500"
+              >
                 ثبت نام کنید
               </Link>
             </p>

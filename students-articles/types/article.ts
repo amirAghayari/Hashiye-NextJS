@@ -25,4 +25,16 @@ export interface Article {
   updatedAt: string;
 }
 
-
+export interface ArticlesState {
+  success: boolean;
+  error: string | undefined;
+  articles: Article[] | undefined;
+  pagination:
+    | {
+        page: number;
+        limit: number;
+        total: number;
+        pages: number;
+      }
+    | undefined;
+}

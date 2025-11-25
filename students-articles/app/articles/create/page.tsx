@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,62 +14,62 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { createArticle } from "@/actions/articles";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const initialState = {
+  success: false,
+  error: "",
+};
 
 export default function CreateArticlePage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState("");
   const router = useRouter();
 
-  // بررسی نقش کاربر و redirect
-  useEffect(() => {
-    const userData =
-      typeof window !== "undefined" ? localStorage.getItem("user") : null;
-    if (!userData) {
-      router.push("/auth/login");
-      return;
-    }
+  const [state, formAction, isPending] = useActionState(
+    createArticle,
+    initialState
+  );
 
-    const user = JSON.parse(userData);
-    if (user.role !== "student") {
-      router.push("/dashboard");
-      return;
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userData = localStorage.getItem("user");
+      if (!userData) {
+        return;
+      }
+      try {
+        const user = JSON.parse(userData);
+        if (user.role !== "student") {
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    const formData = new FormData(e.currentTarget);
-    formData.set("tags", JSON.stringify(tags));
-
-    try {
-      const result = await createArticle(formData);
-      if (result.success) {
-        router.push("/dashboard");
-      } else {
-        setError(result.error || "خطا در ایجاد مقاله");
-      }
-    } catch (err) {
-      setError("خطا در ارتباط با سرور");
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (state.success) {
+      router.push("/dashboard");
     }
-  };
+  }, [state.success, router]);
 
   const addTag = () => {
     const trimmed = tagInput.trim();
     if (trimmed && !tags.includes(trimmed) && tags.length < 10) {
-      setTags([...tags, trimmed]);
+      setTags((prev) => [...prev, trimmed]);
       setTagInput("");
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+    setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -99,8 +99,7 @@ export default function CreateArticlePage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* عنوان */}
+            <form action={formAction} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="title">عنوان مقاله *</Label>
                 <Input
@@ -113,27 +112,23 @@ export default function CreateArticlePage() {
                 />
               </div>
 
-              {/* دسته‌بندی */}
               <div className="space-y-2">
-                <Label htmlFor="category">دسته‌بندی *</Label>
-                <select
-                  id="category"
-                  name="category"
-                  required
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                >
-                  <option value="">انتخاب دسته‌بندی</option>
-                  <option value="کامپیوتر">کامپیوتر</option>
-                  <option value="مهندسی">مهندسی</option>
-                  <option value="علوم پایه">علوم پایه</option>
-                  <option value="پزشکی">پزشکی</option>
-                  <option value="علوم انسانی">علوم انسانی</option>
-                  <option value="هنر">هنر</option>
-                  <option value="سایر">سایر</option>
-                </select>
+                <Select name="category" required>
+                  <SelectTrigger className="w-[180px]" id="category">
+                    <SelectValue placeholder="دسته بندی" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="کامپیوتر">کامپیوتر</SelectItem>
+                    <SelectItem value="مهندسی">مهندسی</SelectItem>
+                    <SelectItem value="علوم پایه">علوم پایه</SelectItem>
+                    <SelectItem value="پزشکی">پزشکی</SelectItem>
+                    <SelectItem value="علوم انسانی">علوم انسانی</SelectItem>
+                    <SelectItem value="هنر">هنر</SelectItem>
+                    <SelectItem value="سایر">سایر</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              {/* محتوا */}
               <div className="space-y-2">
                 <Label htmlFor="content">محتوای مقاله *</Label>
                 <Textarea
@@ -146,7 +141,6 @@ export default function CreateArticlePage() {
                 />
               </div>
 
-              {/* برچسب‌ها */}
               <div className="space-y-2">
                 <Label htmlFor="tags">برچسب‌ها (حداکثر ۱۰ برچسب)</Label>
                 <div className="flex gap-2">
@@ -189,15 +183,15 @@ export default function CreateArticlePage() {
                 )}
               </div>
 
-              {error && (
+              {state.error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                  {error}
+                  {state.error}
                 </div>
               )}
 
               <div className="flex gap-4">
-                <Button type="submit" disabled={isLoading} className="flex-1">
-                  {isLoading ? "در حال ایجاد..." : "ایجاد مقاله"}
+                <Button type="submit" disabled={isPending} className="flex-1">
+                  {isPending ? "در حال ایجاد..." : "ایجاد مقاله"}
                 </Button>
                 <Button
                   type="button"

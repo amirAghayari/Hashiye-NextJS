@@ -1,42 +1,56 @@
-'use client';
+"use client";
 
-import { useFormStatus } from 'react-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useActionState } from 'react';
-import { login } from '@/actions/auth';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useActionState, useEffect } from "react";
+import { login } from "@/actions/auth";
+import { useRouter } from "next/navigation";
 
 interface LoginActionProps {
-  loginAction: (formData: FormData) => Promise<{ success: boolean; error?: string }>;
+  loginAction: (
+    formData: FormData
+  ) => Promise<{ success: boolean; error?: string; user?: any }>;
 }
 
-
-// TODO : submit btn
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      type="submit"
-      className="w-full"
-      disabled={pending} 
-    >
-      {pending ? 'در حال ورود...' : 'ورود'}
-    </Button>
-  );
+interface LoginState {
+  success: boolean;
+  error?: string;
+  user?: any;
 }
 
 export default function LoginForm() {
-  
-  const initialState = { success: false, error: '' };
+  const router = useRouter();
+  const initialState: LoginState = {
+    success: false,
+    error: "",
+    user: undefined,
+  };
 
+  const [state, formAction, isPending] = useActionState<LoginState, FormData>(
+    login,
+    initialState
+  );
 
-  const [state, formAction] = useActionState(login, initialState);
+  useEffect(() => {
+    console.log("State changed:", state);
+    if (state.success && state.user) {
+      // Store user data in localStorage for dashboard
+      const userData = {
+        email: state.user.email,
+        fullName: state.user.fullName,
+        role: state.user.role,
+        university: state.user.university,
+        field: state.user.field,
+      };
+      localStorage.setItem("user", JSON.stringify(userData));
+      console.log("User data stored in localStorage:", userData);
+      router.push("/dashboard");
+    }
+  }, [state.success, state.user, router]);
 
   return (
- 
-    <form action={formAction} className="space-y-4"> 
+    <form action={formAction} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">ایمیل</Label>
         <Input
@@ -66,7 +80,9 @@ export default function LoginForm() {
         </div>
       )}
 
-      <SubmitButton />
+      <Button type="submit" disabled={isPending} className="flex-1 w-full">
+        {isPending ? "در حال ورود..." : "ورود"}
+      </Button>
     </form>
   );
 }

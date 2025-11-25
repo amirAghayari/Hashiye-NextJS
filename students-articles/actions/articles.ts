@@ -5,8 +5,17 @@ import Article from "@/models/Article";
 import { ArticleSchema } from "@/lib/validations/articleValidation";
 import { getCurrentUser } from "@/lib/server/getCurrentUser";
 
+type ActionState = {
+  success: boolean;
+  error?: string;
+  message?: string;
+  user?: any; // Replace 'any' with your actual User type if available
+};
 
-export async function createArticle(formData: FormData) {
+export async function createArticle(
+  prevState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
   try {
     const user = await getCurrentUser();
 
@@ -40,8 +49,11 @@ export async function createArticle(formData: FormData) {
   }
 }
 
-export async function getArticles(page: number = 1, limit: number = 10) {
+export async function getArticles(prevState: any, formData: FormData) {
   try {
+    const page = parseInt(formData.get("page") as string) || 1;
+    const limit = parseInt(formData.get("limit") as string) || 10;
+
     await connectDB();
 
     const skip = (page - 1) * limit;
@@ -57,6 +69,7 @@ export async function getArticles(page: number = 1, limit: number = 10) {
 
     return {
       success: true,
+      error: undefined,
       articles: JSON.parse(JSON.stringify(articles)),
       pagination: {
         page,
@@ -66,7 +79,12 @@ export async function getArticles(page: number = 1, limit: number = 10) {
       },
     };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error.message,
+      articles: undefined,
+      pagination: undefined,
+    };
   }
 }
 
