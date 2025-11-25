@@ -4,8 +4,16 @@ import { createUser, authenticateUser } from "@/lib/server/auth/auth";
 import connectDB from "@/lib/server/mongoose";
 import { UserSchema } from "@/lib/validations/userValidation";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export async function register(formData: FormData) {
+type ActionState = {
+  success: boolean;
+  error?: string;
+  message ?: string ;
+  user?: any; // Replace 'any' with your actual User type if available
+};
+
+export async function register( prevState: ActionState  , formData: FormData  ) : Promise<ActionState> {
   const data = {
     fullName: formData.get("fullName"),
     email: formData.get("email"),
@@ -37,32 +45,33 @@ export async function register(formData: FormData) {
     return { success: false, error: error.message };
   }
 }
+export async function login(
+  prevState: { success: boolean; error?: string },
+  formData: FormData
+) {
+  const data = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  };
 
-export async function login(formData: FormData) {
   try {
-    const validatedData = UserSchema.login.parse({
-      email: formData.get("email"),
-      password: formData.get("password"),
-    });
+    const validatedData = UserSchema.login.parse(data);
 
-    const result = await authenticateUser(
-      validatedData.email,
-      validatedData.password
-    );
+    const result = await authenticateUser(validatedData.email, validatedData.password);
 
     const cookieStore = await cookies();
-
     cookieStore.set("auth-token", result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
 
-    return { success: true, user: result.user };
+
+    return { success: true, error: undefined };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || "خطایی رخ داد" };
   }
 }
 

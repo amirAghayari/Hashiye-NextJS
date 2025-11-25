@@ -1,25 +1,18 @@
-'use client';
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+const Home = async () => {
+  const cookieStore = await cookies();
+  const user = cookieStore.get("user"); // یا مثلاً "token"
 
-export default function Home() {
-  const router = useRouter();
 
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      router.push('/dashboard');
-    } else {
-      router.push('/auth/login');
-    }
-  }, [router]);
+  if (user) {
+    redirect("/dashboard");
+  } else {
+    redirect("/auth/login");
+  }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <div className="text-xl font-semibold">در حال انتقال...</div>
-      </div>
-    </div>
-  );
+  return null;
 }
+
+export default Home;
