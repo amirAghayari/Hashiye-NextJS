@@ -2,14 +2,20 @@
 
 import connectDB from "@/lib/server/mongoose";
 import Article from "@/models/Article";
+// فرض بر این است که این فایل‌ها وجود دارند
 import { ArticleSchema } from "@/lib/validations/articleValidation";
 import { getCurrentUser } from "@/lib/server/getCurrentUser";
 
+// تعریف تایپ‌ها برای جلوگیری از ارورهای تایپ‌اسکریپت
 type ActionState = {
   success: boolean;
   error?: string;
   message?: string;
-  user?: any; // Replace 'any' with your actual User type if available
+  user?: any;
+  articleId?: string;
+  article?: any;
+  pagination?: any;
+  articles?: any[];
 };
 
 export async function createArticle(
@@ -28,7 +34,10 @@ export async function createArticle(
       content: formData.get("content"),
       category: formData.get("category"),
       tags: formData.get("tags")
-        ? JSON.parse(formData.get("tags") as string)
+        ? (formData.get("tags") as string)
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0)
         : [],
     };
 
@@ -90,6 +99,11 @@ export async function getArticles(prevState: any, formData: FormData) {
 
 export async function getArticleById(id: string) {
   try {
+    // Validate ObjectId format
+    if (!id || typeof id !== "string" || !/^[0-9a-fA-F]{24}$/.test(id)) {
+      throw new Error("مقاله یافت نشد");
+    }
+
     await connectDB();
 
     const article = await Article.findById(id)
@@ -108,6 +122,11 @@ export async function getArticleById(id: string) {
 
 export async function updateArticle(id: string, formData: FormData) {
   try {
+    // Validate ObjectId format
+    if (!id || typeof id !== "string" || !/^[0-9a-fA-F]{24}$/.test(id)) {
+      throw new Error("مقاله یافت نشد");
+    }
+
     const user = await getCurrentUser();
 
     await connectDB();
@@ -126,7 +145,10 @@ export async function updateArticle(id: string, formData: FormData) {
       content: formData.get("content"),
       category: formData.get("category"),
       tags: formData.get("tags")
-        ? JSON.parse(formData.get("tags") as string)
+        ? (formData.get("tags") as string)
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0)
         : [],
     };
 
@@ -134,6 +156,10 @@ export async function updateArticle(id: string, formData: FormData) {
 
     Object.assign(article, validatedData);
     await article.save();
+
+    // Population برای بازگرداندن دیتای کامل به کلاینت بعد از آپدیت
+    await article.populate("author", "fullName university field");
+    await article.populate("grades.professor", "fullName");
 
     return { success: true, article: JSON.parse(JSON.stringify(article)) };
   } catch (error: any) {
@@ -143,6 +169,11 @@ export async function updateArticle(id: string, formData: FormData) {
 
 export async function deleteArticle(id: string) {
   try {
+    // Validate ObjectId format
+    if (!id || typeof id !== "string" || !/^[0-9a-fA-F]{24}$/.test(id)) {
+      throw new Error("مقاله یافت نشد");
+    }
+
     const user = await getCurrentUser();
 
     await connectDB();

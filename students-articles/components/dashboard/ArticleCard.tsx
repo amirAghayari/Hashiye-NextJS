@@ -18,13 +18,24 @@ export default function ArticleCard({
   onViewDetails,
 }: ArticleCardProps) {
   const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("fa-IR");
+    new Date(dateString).toLocaleDateString("fa-IR", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
 
   const getScoreColor = (score: number) => {
     if (score >= 17) return "text-green-600";
     if (score >= 14) return "text-blue-600";
     if (score >= 10) return "text-yellow-600";
     return "text-red-600";
+  };
+
+  const getScoreLabel = (score: number) => {
+    if (score >= 17) return "عالی";
+    if (score >= 14) return "خوب";
+    if (score >= 10) return "قابل قبول";
+    return "ضعیف";
   };
 
   return (
@@ -77,14 +88,20 @@ export default function ArticleCard({
             >
               {article.averageScore.toFixed(1)}
             </div>
-            <div className="text-xs text-gray-500">میانگین نمره</div>
+            <div
+              className={`text-xs font-medium mt-1 ${getScoreColor(
+                article.averageScore
+              )}`}
+            >
+              {getScoreLabel(article.averageScore)}
+            </div>
           </div>
 
           <div className="text-center">
             <div className="text-lg font-semibold text-blue-600">
               {article.grades.length}
             </div>
-            <div className="text-xs text-gray-500">تعداد نمرات</div>
+            <div className="text-xs text-gray-500">نمره</div>
           </div>
         </div>
 

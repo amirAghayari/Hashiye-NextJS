@@ -5,33 +5,39 @@ import { GradeSchema } from "@/lib/validations/gradeValidation";
 import Article from "@/models/Article";
 import { getCurrentUser } from "@/lib/server/getCurrentUser";
 
+type State = {
+  success: boolean;
+  error?: string;
+  message?: string;
+};
 
-
-export async function gradeArticle(formData: FormData) {
+export async function gradeArticle(
+  prevState: State,
+  formData: FormData
+): Promise<State> {
   try {
     const user = await getCurrentUser();
-
     if (user.role !== "professor") {
-      throw new Error("فقط اساتید می‌توانند به مقالات نمره دهند");
+      return { success: false, error: "فقط اساتید می‌توانند نمره دهند" };
     }
 
-    const data = {
-      articleId: formData.get("articleId"),
-      score: Number(formData.get("score")),
-      comment: formData.get("comment") || undefined,
-    };
+    const articleId = formData.get("articleId") as string;
+    const score = Number(formData.get("score"));
+    const comment = (formData.get("comment") as string) || undefined;
 
-    const validatedData = GradeSchema.create.parse(data);
+    const validatedData = GradeSchema.create.parse({
+      articleId,
+      score,
+      comment,
+    });
 
     await connectDB();
 
     const article = await Article.findById(validatedData.articleId);
-    if (!article) {
-      throw new Error("مقاله یافت نشد");
-    }
+    if (!article) return { success: false, error: "مقاله یافت نشد" };
 
-    const existingGradeIndex = article.grades.findIndex(
-      (grade) => grade.professor.toString() === user._id.toString()
+    const existingIndex = article.grades.findIndex(
+      (g: any) => g.professor.toString() === user._id.toString()
     );
 
     const newGrade = {
@@ -41,17 +47,20 @@ export async function gradeArticle(formData: FormData) {
       gradedAt: new Date(),
     };
 
-    if (existingGradeIndex !== -1) {
-      article.grades[existingGradeIndex] = newGrade;
+    if (existingIndex > -1) {
+      article.grades[existingIndex] = newGrade;
     } else {
       article.grades.push(newGrade);
     }
 
     await article.save();
 
-    return { success: true, article: JSON.parse(JSON.stringify(article)) };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+    return {
+      success: true,
+      message: existingIndex > -1 ? "نمره به‌روزرسانی شد" : "نمره ثبت شد",
+    };
+  } catch (err: any) {
+    return { success: false, error: err.message || "خطای سرور" };
   }
 }
 

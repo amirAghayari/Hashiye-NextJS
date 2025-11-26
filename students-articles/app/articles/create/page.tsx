@@ -189,6 +189,9 @@ export default function CreateArticlePage() {
                 </div>
               )}
 
+              {/* تگ‌ها به صورت مخفی ارسال میشن */}
+              <input type="hidden" name="tags" value={tags.join(", ")} />
+
               <div className="flex gap-4">
                 <Button type="submit" disabled={isPending} className="flex-1">
                   {isPending ? "در حال ایجاد..." : "ایجاد مقاله"}

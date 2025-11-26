@@ -106,7 +106,7 @@ articleSchema.index({ category: 1 });
 articleSchema.index({ averageScore: -1 });
 articleSchema.index({ createdAt: -1 });
 
-articleSchema.pre("save", function (next) {
+articleSchema.pre("save", async function () {
   if (this.isModified("grades")) {
     if (this.grades && this.grades.length > 0) {
       const totalScore = this.grades.reduce(
@@ -118,7 +118,6 @@ articleSchema.pre("save", function (next) {
       this.averageScore = 0;
     }
   }
-  next();
 });
 
 const Article =
