@@ -5,7 +5,7 @@ import { GradeSchema } from "@/lib/validations/gradeValidation";
 import Article from "@/models/Article";
 import { getCurrentUser } from "@/lib/server/getCurrentUser";
 
-type State = {
+export type State = {
   success: boolean;
   error?: string;
   message?: string;

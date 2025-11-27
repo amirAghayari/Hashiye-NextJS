@@ -7,12 +7,6 @@ import { useActionState, useEffect } from "react";
 import { login } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 
-interface LoginActionProps {
-  loginAction: (
-    formData: FormData
-  ) => Promise<{ success: boolean; error?: string; user?: any }>;
-}
-
 interface LoginState {
   success: boolean;
   error?: string;
@@ -33,9 +27,7 @@ export default function LoginForm() {
   );
 
   useEffect(() => {
-    console.log("State changed:", state);
     if (state.success && state.user) {
-      // Store user data in localStorage for dashboard
       const userData = {
         email: state.user.email,
         fullName: state.user.fullName,

@@ -1,40 +1,35 @@
-'use client';
+"use client";
 
-import { useActionState, useEffect } from 'react'; // React 19 Hook
-import { useFormStatus } from 'react-dom'; // React 19 Hook for Status
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { register } from '@/actions/auth';
+import { useActionState, useEffect } from "react"; // React 19 Hook
+import { useFormStatus } from "react-dom"; // React 19 Hook for Status
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { register } from "@/actions/auth";
 
 const initialState = {
   success: false,
-  error: '',
-  message: '',
+  error: "",
+  message: "",
 };
 
-// TODO :  پندینگ رو خود اکشن استیت داره 
-function SubmitButton() {
-  const { pending } = useFormStatus();
- 
-  return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? 'در حال ثبت نام...' : 'ثبت نام'}
-    </Button>
-  );
-}
-
 export default function RegisterForm() {
-  const [state, formAction] = useActionState(register, initialState);
+  const [state, formAction, pending] = useActionState(register, initialState);
   const router = useRouter();
 
   useEffect(() => {
     if (state.success && state.user) {
-      localStorage.setItem('user', JSON.stringify(state.user));
-      router.push('/dashboard');
+      localStorage.setItem("user", JSON.stringify(state.user));
+      router.push("/dashboard");
     }
   }, [state.success, state.user, router]);
 
@@ -122,13 +117,18 @@ export default function RegisterForm() {
             </div>
           )}
 
-          <SubmitButton />
+          <Button type="submit" className="w-full" disabled={pending}>
+            {pending ? "در حال ثبت نام..." : "ثبت نام"}
+          </Button>
         </form>
-        
+
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
-            قبلاً ثبت نام کرده‌اید؟{' '}
-            <Link href="/auth/login" className="text-blue-600 hover:text-blue-500">
+            قبلاً ثبت نام کرده‌اید؟
+            <Link
+              href="/auth/login"
+              className="text-blue-600 hover:text-blue-500"
+            >
               ورود به سیستم
             </Link>
           </p>

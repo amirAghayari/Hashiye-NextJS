@@ -1,5 +1,7 @@
 "use client";
 
+// TODO : کامپوننت بندی کن
+
 import { useState, useActionState } from "react"; // useActionState is React 19 hook
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -17,40 +19,35 @@ import {
 } from "@/actions/article-wrapper";
 import { Article } from "@/types/article";
 
+// TODO
 interface ArticleViewProps {
   initialArticle: Article;
   isOwner: boolean;
   isProfessor: boolean;
 }
 
-const initialState = {
-  message: "",
-  success: false,
-};
-
 export default function ArticleInteractiveView({
   initialArticle,
   isOwner,
   isProfessor,
 }: ArticleViewProps) {
+  const initialState = {
+    message: "",
+    success: false,
+  };
+
   const [article, setArticle] = useState(initialArticle);
   const [isEditing, setIsEditing] = useState(false);
   const [isGrading, setIsGrading] = useState(false);
 
-  // --- React 19: Server Actions Integration ---
-
-  // 1. Delete Action
   const [deleteState, deleteAction, isDeleting] = useActionState(
     deleteArticleAction,
     initialState
   );
 
-  // 2. Update Action
-  //
+  // TODO : فهم این قسمت
   const [updateState, updateAction, isUpdating] = useActionState(
     async (prevState: any, formData: FormData) => {
-      // ما باید آی‌دی مقاله را هم بفرستیم. می‌توانیم از bind استفاده کنیم یا داخل اکشن هندل کنیم
-      // در اینجا یک رپر دور اکشن اصلی می‌نویسیم تا استیت لوکال را آپدیت کنیم
       formData.append("id", article._id);
       const result = await updateArticleAction(prevState, formData);
       if (result.success && result.article) {
@@ -62,7 +59,6 @@ export default function ArticleInteractiveView({
     initialState
   );
 
-  // 3. Grade Action
   const [gradeState, gradeAction, isSubmittingGrade] = useActionState(
     async (prevState: any, formData: FormData) => {
       formData.append("articleId", article._id);
@@ -76,7 +72,7 @@ export default function ArticleInteractiveView({
     initialState
   );
 
-  // Utilities بهتر
+  // TODO :
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("fa-IR", {
       year: "numeric",
@@ -98,7 +94,6 @@ export default function ArticleInteractiveView({
 
   return (
     <>
-      {/* نمایش ارورهای گلوبال اکشن‌ها */}
       {(updateState?.message ||
         deleteState?.message ||
         gradeState?.message) && (
@@ -118,8 +113,6 @@ export default function ArticleInteractiveView({
           <div className="flex justify-between items-start">
             <div className="flex-1">
               {isEditing ? (
-                // --- Edit Form ---
-                // استفاده از فرم HTML استاندارد که حتی بدون JS هم (تا حدی) کار می‌کند
                 <form
                   id="edit-form"
                   action={updateAction}
@@ -132,7 +125,6 @@ export default function ArticleInteractiveView({
                     placeholder="عنوان مقاله"
                     required
                   />
-                  {/* تگ‌ها به صورت بهتری مدیریت میشن */}
                   <input
                     type="hidden"
                     name="tags"
@@ -157,14 +149,12 @@ export default function ArticleInteractiveView({
               </CardDescription>
             </div>
 
-            {/* --- Action Buttons --- */}
             <div className="flex gap-2">
               {isOwner && !isEditing && (
                 <>
                   <Button onClick={() => setIsEditing(true)} variant="outline">
                     ویرایش
                   </Button>
-                  {/* Delete Button with Server Action */}
                   <form action={deleteAction}>
                     <input type="hidden" name="id" value={article._id} />
                     <Button
@@ -195,11 +185,8 @@ export default function ArticleInteractiveView({
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* --- Content Area --- */}
           {isEditing ? (
             <div className="space-y-4">
-              {/* فرم ادیت - بخش دوم فیلدها. چون فرم اصلی بالاست، از form attribute استفاده می‌کنیم یا کل محتوا باید داخل فرم باشد.
-                   برای سادگی فرض می‌کنیم این اینپوت‌ها هم داخل همان تگ فرم بالا هستند یا از form="edit-form" استفاده می‌کنند. */}
               <div>
                 <label className="block text-sm font-medium mb-2">
                   دسته‌بندی
@@ -255,7 +242,6 @@ export default function ArticleInteractiveView({
             </div>
           )}
 
-          {/* Tags Display */}
           {!isEditing && article.tags.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-3">برچسب‌ها</h3>
@@ -295,7 +281,6 @@ export default function ArticleInteractiveView({
               </div>
             </div>
 
-            {/* List of Grades */}
             <div className="space-y-4 mb-6">
               {article.grades.map((grade) => (
                 <Card key={grade._id}>
@@ -330,7 +315,6 @@ export default function ArticleInteractiveView({
               ))}
             </div>
 
-            {/* --- Grading Form (Professor Only) --- */}
             {isProfessor && isGrading && (
               <Card className="border-blue-200 bg-blue-50">
                 <CardHeader>

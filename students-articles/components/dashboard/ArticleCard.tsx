@@ -17,6 +17,7 @@ export default function ArticleCard({
   article,
   onViewDetails,
 }: ArticleCardProps) {
+  // TODO : فانکشن هارو جاشون رو عوض کن
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("fa-IR", {
       year: "numeric",

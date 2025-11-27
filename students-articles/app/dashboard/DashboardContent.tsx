@@ -11,6 +11,7 @@ import LoadingSkeleton from "@/components/dashboard/LoadingSkeleton";
 import ErrorState from "@/components/dashboard/ErrorState";
 import EmptyState from "@/components/dashboard/EmptyState";
 
+// TODO : fix types
 interface DashboardContentProps {
   user: any;
 }

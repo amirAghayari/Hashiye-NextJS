@@ -4,6 +4,8 @@ import { useSelector, useDispatch, TypedUseSelectorHook } from "react-redux";
 import { Article } from "@/types/article";
 import { Provider as ReduxProvider } from "react-redux";
 
+// TODO : فهم این استور
+
 interface GradesState {
   selectedArticle: Article | null;
 }

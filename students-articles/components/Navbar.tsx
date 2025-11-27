@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/actions/auth";
 
@@ -19,6 +19,7 @@ export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -37,12 +38,19 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md border-b">
+    <nav
+      className={`bg-white shadow-md border-b ${
+        pathname.includes("auth") ? "hidden" : ""
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/dashboard" className="text-xl font-bold text-blue-600">
-              سیستم مقالات دانشجویی
+            <Link
+              href="/dashboard"
+              className="text-xl  md:text-2xl font-bold text-primary "
+            >
+              myArticles
             </Link>
           </div>
 
@@ -52,31 +60,30 @@ export default function Navbar() {
                 <div className="text-sm text-gray-700">
                   <div className="font-medium">{user.fullName}</div>
                   <div className="text-gray-500">
-                    {user.role === "student" ? "دانشجو" : "استاد"} -{" "}
+                    {user.role === "student" ? "دانشجو" : "استاد"} -
                     {user.university}
                   </div>
                 </div>
 
-                {user.role === "student" && (
+                {user.role === "student" ? (
                   <Link href="/articles/create">
                     <Button variant="outline">ایجاد مقاله</Button>
                   </Link>
-                )}
-
-                {user.role === "professor" && (
+                ) : (
                   <Link href="/grades">
                     <Button variant="outline">نمره‌دهی به مقالات</Button>
                   </Link>
                 )}
 
                 <Link href="/dashboard">
-                  <Button variant="ghost">داشبورد</Button>
+                  <Button variant="outline">داشبورد</Button>
                 </Link>
 
                 <Button
                   onClick={handleLogout}
                   variant="destructive"
                   disabled={isLoading}
+                  className="mr-4 text-white"
                 >
                   {/* TODO : یه لودینگ درست کن برای این قسمت ها  */}
                   {isLoading ? "در حال خروج..." : "خروج"}
