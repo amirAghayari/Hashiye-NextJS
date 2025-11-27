@@ -7,6 +7,9 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Article } from "@/types/article";
+import { getScoreColor } from "@/lib/getScoreColor";
+import { formatDate } from "@/lib/formatDate";
+import { getScoreLabel } from "@/lib/getScoreLabel";
 
 interface ArticleCardProps {
   article: Article;
@@ -17,28 +20,6 @@ export default function ArticleCard({
   article,
   onViewDetails,
 }: ArticleCardProps) {
-  // TODO : فانکشن هارو جاشون رو عوض کن
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("fa-IR", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-
-  const getScoreColor = (score: number) => {
-    if (score >= 17) return "text-green-600";
-    if (score >= 14) return "text-blue-600";
-    if (score >= 10) return "text-yellow-600";
-    return "text-red-600";
-  };
-
-  const getScoreLabel = (score: number) => {
-    if (score >= 17) return "عالی";
-    if (score >= 14) return "خوب";
-    if (score >= 10) return "قابل قبول";
-    return "ضعیف";
-  };
-
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardHeader>

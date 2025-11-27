@@ -17,14 +17,10 @@ import {
   deleteArticleAction,
   gradeArticleAction,
 } from "@/actions/article-wrapper";
-import { Article } from "@/types/article";
-
-// TODO
-interface ArticleViewProps {
-  initialArticle: Article;
-  isOwner: boolean;
-  isProfessor: boolean;
-}
+import { ArticleViewProps } from "@/types/article";
+import { formatDate } from "@/lib/formatDate";
+import { getScoreColor } from "@/lib/getScoreColor";
+import { getScoreLabel } from "@/lib/getScoreLabel";
 
 export default function ArticleInteractiveView({
   initialArticle,
@@ -72,26 +68,6 @@ export default function ArticleInteractiveView({
     initialState
   );
 
-  // TODO :
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("fa-IR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  const getScoreColor = (score: number) => {
-    if (score >= 17) return "text-green-600";
-    if (score >= 14) return "text-blue-600";
-    if (score >= 10) return "text-yellow-600";
-    return "text-red-600";
-  };
-  const getScoreLabel = (score: number) => {
-    if (score >= 17) return "عالی";
-    if (score >= 14) return "خوب";
-    if (score >= 10) return "قابل قبول";
-    return "ضعیف";
-  };
-
   return (
     <>
       {(updateState?.message ||
@@ -110,8 +86,8 @@ export default function ArticleInteractiveView({
 
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+            <div className="w-full md:flex-1">
               {isEditing ? (
                 <form
                   id="edit-form"
@@ -132,11 +108,13 @@ export default function ArticleInteractiveView({
                   />
                 </form>
               ) : (
-                <CardTitle className="text-2xl">{article.title}</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">
+                  {article.title}
+                </CardTitle>
               )}
 
               <CardDescription className="mt-2">
-                <div className="flex items-center gap-4 text-sm">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                   <span>نویسنده: {article.author.fullName}</span>
                   <span>{formatDate(article.createdAt)}</span>
                   <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
@@ -152,7 +130,11 @@ export default function ArticleInteractiveView({
             <div className="flex gap-2">
               {isOwner && !isEditing && (
                 <>
-                  <Button onClick={() => setIsEditing(true)} variant="outline">
+                  <Button
+                    onClick={() => setIsEditing(true)}
+                    variant="outline"
+                    className="flex-1 md:flex-none"
+                  >
                     ویرایش
                   </Button>
                   <form action={deleteAction}>
@@ -161,6 +143,7 @@ export default function ArticleInteractiveView({
                       variant="destructive"
                       type="submit"
                       disabled={isDeleting}
+                      className="flex-1 md:flex-none"
                     >
                       {isDeleting ? "..." : "حذف"}
                     </Button>
@@ -169,16 +152,30 @@ export default function ArticleInteractiveView({
               )}
               {isOwner && isEditing && (
                 <>
-                  <Button type="submit" form="edit-form" disabled={isUpdating}>
+                  <Button
+                    type="submit"
+                    form="edit-form"
+                    disabled={isUpdating}
+                    className="flex-1 md:flex-none"
+                  >
                     {isUpdating ? "در حال ذخیره..." : "ذخیره"}
                   </Button>
-                  <Button onClick={() => setIsEditing(false)} variant="outline">
+                  <Button
+                    onClick={() => setIsEditing(false)}
+                    variant="outline"
+                    className="flex-1 md:flex-none"
+                  >
                     انصراف
                   </Button>
                 </>
               )}
               {isProfessor && !isGrading && (
-                <Button onClick={() => setIsGrading(true)}>نمره‌دهی</Button>
+                <Button
+                  onClick={() => setIsGrading(true)}
+                  className="w-full md:w-auto"
+                >
+                  نمره‌دهی
+                </Button>
               )}
             </div>
           </div>
@@ -236,7 +233,7 @@ export default function ArticleInteractiveView({
           ) : (
             <div>
               <h3 className="text-lg font-semibold mb-3">محتوای مقاله</h3>
-              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed text-sm sm:text-base">
                 {article.content}
               </div>
             </div>
@@ -245,7 +242,7 @@ export default function ArticleInteractiveView({
           {!isEditing && article.tags.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-3">برچسب‌ها</h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1 sm:gap-2">
                 {article.tags.map((tag, index) => (
                   <span
                     key={index}
@@ -285,13 +282,13 @@ export default function ArticleInteractiveView({
               {article.grades.map((grade) => (
                 <Card key={grade._id}>
                   <CardContent className="pt-4">
-                    <div className="flex justify-between items-start">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
                       <div>
                         <div className="font-medium">
                           {grade.professor.fullName}
                         </div>
                         <div
-                          className={`text-2xl font-bold ${getScoreColor(
+                          className={`text-xl sm:text-2xl font-bold ${getScoreColor(
                             grade.score
                           )}`}
                         >
@@ -306,7 +303,7 @@ export default function ArticleInteractiveView({
                           </div>
                         )}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
                         {formatDate(grade.gradedAt)}
                       </div>
                     </div>
@@ -346,13 +343,18 @@ export default function ArticleInteractiveView({
                         placeholder="نظر خود را بنویسید..."
                       />
                     </div>
-                    <div className="flex gap-2">
-                      <Button type="submit" disabled={isSubmittingGrade}>
+                    <div className="flex flex-wrap gap-2 w-full md:w-auto mt-4 md:mt-0">
+                      <Button
+                        type="submit"
+                        disabled={isSubmittingGrade}
+                        className="w-full sm:w-auto"
+                      >
                         {isSubmittingGrade ? "در حال ثبت..." : "ثبت نمره"}
                       </Button>
                       <Button
                         type="button"
                         variant="outline"
+                        className="w-full sm:w-auto"
                         onClick={() => setIsGrading(false)}
                       >
                         انصراف

@@ -2,9 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getArticleById } from "@/actions/articles";
 import { getCurrentUser } from "@/lib/server/getCurrentUser";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import ArticleInteractiveView from "@/components/article/ArticleInteractiveView";
+import error from "@/app/error";
 
 export default async function ArticleDetailPage({
   params,
@@ -23,25 +22,7 @@ export default async function ArticleDetailPage({
       notFound();
     }
 
-    // TODO  : این رو میتونی فایل ارور کنی
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="pt-6 text-center">
-            <div className="text-red-600 mb-4">
-              <div className="text-4xl mb-2">⚠️</div>
-              <h3 className="text-lg font-semibold">خطا در بارگذاری مقاله</h3>
-            </div>
-            <p className="text-gray-600 mb-4">
-              {articleResult.error || "خطایی رخ داده است"}
-            </p>
-            <Link href="/dashboard">
-              <Button>بازگشت به داشبورد</Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return error();
   }
 
   const article = articleResult.article;

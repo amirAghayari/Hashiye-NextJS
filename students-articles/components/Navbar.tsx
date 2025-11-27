@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/actions/auth";
+import { Spinner } from "./ui/spinner";
 
 interface User {
   id: string;
@@ -37,6 +38,14 @@ export default function Navbar() {
     setIsLoading(false);
   };
 
+  // Mobile menu state
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
   return (
     <nav
       className={`bg-white shadow-md border-b ${
@@ -48,30 +57,35 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link
               href="/dashboard"
-              className="text-xl  md:text-2xl font-bold text-primary "
+              className="text-xl md:text-2xl font-bold text-primary"
             >
               myArticles
             </Link>
           </div>
 
-          <div className="flex items-center space-x-4 space-x-reverse">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-4 space-x-reverse">
             {user ? (
               <>
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700 text-right">
                   <div className="font-medium">{user.fullName}</div>
                   <div className="text-gray-500">
-                    {user.role === "student" ? "دانشجو" : "استاد"} -
+                    {user.role === "student" ? "دانشجو" : "استاد"} -{" "}
                     {user.university}
                   </div>
                 </div>
 
                 {user.role === "student" ? (
                   <Link href="/articles/create">
-                    <Button variant="outline">ایجاد مقاله</Button>
+                    <Button variant="outline" className="whitespace-nowrap">
+                      ایجاد مقاله
+                    </Button>
                   </Link>
                 ) : (
                   <Link href="/grades">
-                    <Button variant="outline">نمره‌دهی به مقالات</Button>
+                    <Button variant="outline" className="whitespace-nowrap">
+                      نمره‌دهی به مقالات
+                    </Button>
                   </Link>
                 )}
 
@@ -83,10 +97,9 @@ export default function Navbar() {
                   onClick={handleLogout}
                   variant="destructive"
                   disabled={isLoading}
-                  className="mr-4 text-white"
+                  className="text-white mr-4"
                 >
-                  {/* TODO : یه لودینگ درست کن برای این قسمت ها  */}
-                  {isLoading ? "در حال خروج..." : "خروج"}
+                  {isLoading ? <Spinner className="size-4" /> : "خروج"}
                 </Button>
               </>
             ) : (
@@ -100,8 +113,111 @@ export default function Navbar() {
               </>
             )}
           </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
+            >
+              <svg
+                className="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                {isMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {user ? (
+              <>
+                <div className="px-3 py-2 text-sm text-gray-700">
+                  <div className="font-medium">{user.fullName}</div>
+                  <div className="text-gray-500">
+                    {user.role === "student" ? "دانشجو" : "استاد"} -{" "}
+                    {user.university}
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-200 my-2"></div>
+
+                <Link
+                  href="/dashboard"
+                  className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md"
+                >
+                  داشبورد
+                </Link>
+
+                {user.role === "student" ? (
+                  <Link
+                    href="/articles/create"
+                    className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md"
+                  >
+                    ایجاد مقاله
+                  </Link>
+                ) : (
+                  <Link
+                    href="/grades"
+                    className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md"
+                  >
+                    نمره‌دهی به مقالات
+                  </Link>
+                )}
+
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoading}
+                  className="w-full text-right px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md flex items-center justify-end space-x-2 space-x-reverse "
+                >
+                  {isLoading ? (
+                    <Spinner className="size-4" />
+                  ) : (
+                    <span>خروج از حساب کاربری</span>
+                  )}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md"
+                >
+                  ورود
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="block px-3 py-2 text-base font-medium text-white bg-primary hover:bg-primary/90 rounded-md text-center"
+                >
+                  ثبت نام
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

@@ -38,3 +38,9 @@ export interface ArticlesState {
       }
     | undefined;
 }
+
+export interface ArticleViewProps {
+  initialArticle: Article;
+  isOwner: boolean;
+  isProfessor: boolean;
+}

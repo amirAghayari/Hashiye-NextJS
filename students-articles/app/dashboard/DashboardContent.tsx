@@ -11,9 +11,10 @@ import LoadingSkeleton from "@/components/dashboard/LoadingSkeleton";
 import ErrorState from "@/components/dashboard/ErrorState";
 import EmptyState from "@/components/dashboard/EmptyState";
 
-// TODO : fix types
 interface DashboardContentProps {
-  user: any;
+  user: {
+    role: string;
+  };
 }
 
 export default function DashboardContent({ user }: DashboardContentProps) {
@@ -36,14 +37,15 @@ export default function DashboardContent({ user }: DashboardContentProps) {
     const formData = new FormData();
     formData.append("page", page.toString());
     formData.append("limit", "10");
+
     articlesFormAction(formData);
-    setCurrentPage(page);
   };
 
-  // Load initial articles
   useEffect(() => {
-    loadArticles(1);
-  }, []);
+    if (!articlesState.success && !isArticlesLoading) {
+      loadArticles(1);
+    }
+  }, [articlesState, isArticlesLoading]);
 
   // Show error state
   if (articlesState.error && !isArticlesLoading) {
