@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/actions/auth";
 import { Spinner } from "./ui/spinner";
+import { ThemeToggle } from "./theme-toggle";
 
 interface User {
   id: string;
@@ -48,7 +49,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`bg-white shadow-md border-b ${
+      className={`bg-background shadow-md border-b ${
         pathname.includes("auth") ? "hidden" : ""
       }`}
     >
@@ -92,6 +93,8 @@ export default function Navbar() {
                 <Link href="/dashboard">
                   <Button variant="outline">داشبورد</Button>
                 </Link>
+
+                <ThemeToggle />
 
                 <Button
                   onClick={handleLogout}
