@@ -119,6 +119,7 @@ export default function Navbar() {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
+            <ThemeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
@@ -159,10 +160,7 @@ export default function Navbar() {
               <>
                 <div className="px-3 py-2 text-sm text-gray-700">
                   <div className="font-medium">{user.fullName}</div>
-                  <div className="text-gray-500">
-                    {user.role === "student" ? "دانشجو" : "استاد"} -{" "}
-                    {user.university}
-                  </div>
+                  <div className="text-gray-500">{user.university}</div>
                 </div>
 
                 <div className="border-t border-gray-200 my-2"></div>
