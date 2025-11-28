@@ -66,7 +66,7 @@ export default function Navbar() {
         <div className="flex flex-row-reverse justify-between h-16">
           <div className="flex items-center">
             <Link
-              href="/dashboard"
+              href="/"
               className="text-xl md:text-2xl font-bold text-primary"
             >
               myArticles

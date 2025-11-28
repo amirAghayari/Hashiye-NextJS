@@ -233,7 +233,7 @@ export default function ArticleInteractiveView({
           ) : (
             <div>
               <h3 className="text-lg font-semibold mb-3">محتوای مقاله</h3>
-              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed text-sm sm:text-base">
+              <div className="whitespace-pre-wrap text-foreground leading-relaxed text-sm sm:text-base">
                 {article.content}
               </div>
             </div>
@@ -246,7 +246,7 @@ export default function ArticleInteractiveView({
                 {article.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm"
+                    className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
                   >
                     {tag}
                   </span>

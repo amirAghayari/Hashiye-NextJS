@@ -55,12 +55,12 @@ export default function DashboardContent({ user }: DashboardContentProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">داشبورد</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-foreground mb-2">داشبورد</h1>
+          <p className="text-foreground mt-4">
             {user?.role === "student"
               ? "خوش آمدید! در اینجا می‌توانید مقالات خود را مدیریت کنید."
               : "خوش آمدید! در اینجا می‌توانید مقالات دانشجویان را مشاهده و نمره‌دهی کنید."}
