@@ -68,7 +68,9 @@ export async function getArticles(prevState: any, formData: FormData) {
 
     const skip = (page - 1) * limit;
 
-    const articles = await Article.find({ user: user._id })
+    const isStudent = user.role === "student";
+
+    const articles = await Article.find(isStudent ? { author: user._id } : {})
       .populate("author", "fullName university field")
       .populate("grades.professor", "fullName")
       .sort({ createdAt: -1 })

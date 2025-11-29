@@ -53,14 +53,6 @@ const features = [
     details: ["آرشیو کامل", "کنترل دسترسی"],
     gradient: "from-red-500 to-pink-500",
   },
-  {
-    icon: Zap,
-    title: "پردازش هوشمند",
-    description:
-      "توزیع خودکار مقالات به داوران با استفاده از الگوریتم‌های هوش مصنوعی",
-    details: ["تخصیص هوشمند", "یادآوری خودکار", "گردش کار بهینه"],
-    gradient: "from-indigo-500 to-blue-500",
-  },
 ];
 
 const FeaturesSection = () => {
