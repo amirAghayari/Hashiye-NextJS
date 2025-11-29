@@ -18,12 +18,9 @@ import {
 import { Menu } from "lucide-react";
 
 interface User {
-  id: string;
   fullName: string;
-  email: string;
   role: "student" | "professor";
   university: string;
-  field: string;
 }
 
 export default function Navbar() {

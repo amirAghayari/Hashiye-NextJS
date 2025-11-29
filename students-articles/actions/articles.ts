@@ -62,12 +62,13 @@ export async function getArticles(prevState: any, formData: FormData) {
   try {
     const page = parseInt(formData.get("page") as string) || 1;
     const limit = parseInt(formData.get("limit") as string) || 10;
+    const user = await getCurrentUser();
 
     await connectDB();
 
     const skip = (page - 1) * limit;
 
-    const articles = await Article.find()
+    const articles = await Article.find({ user: user._id })
       .populate("author", "fullName university field")
       .populate("grades.professor", "fullName")
       .sort({ createdAt: -1 })
