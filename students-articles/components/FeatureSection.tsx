@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import {
@@ -9,13 +8,16 @@ import {
   Users2,
   BarChart3,
   Shield,
-  Zap,
   ArrowLeft,
   ArrowRight,
 } from "lucide-react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const features = [
   {
@@ -55,52 +57,168 @@ const features = [
   },
 ];
 
+gsap.registerPlugin(ScrollTrigger);
+
 const FeaturesSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const sectionEl = sectionRef.current as HTMLElement;
+
+      // Get elements with type safety
+      const heading = sectionEl.querySelector<HTMLElement>("h2");
+      const badge = sectionEl.querySelector<HTMLElement>(".inline-flex");
+      const description = sectionEl.querySelector<HTMLElement>(
+        "p.text-muted-foreground"
+      );
+      const cards = sectionEl.querySelectorAll<HTMLElement>(".feature-card");
+
+      // Animation function with type safety
+      const animateElement = (
+        element: HTMLElement | null,
+        delay = 0,
+        y = 0
+      ) => {
+        if (!element) return;
+
+        gsap.fromTo(
+          element,
+          { opacity: 0, y: y + 30 },
+          {
+            opacity: 1,
+            y: y,
+            duration: 0.8,
+            delay: delay,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      };
+
+      // Animate heading elements
+      if (badge) animateElement(badge, 0);
+      if (heading) animateElement(heading, 0.1);
+      if (description) animateElement(description, 0.2);
+
+      // Animate feature cards
+      cards.forEach((card, index) => {
+        gsap.from(card, {
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+          delay: index * 0.1,
+          ease: "back.out(1.4)",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+          },
+        });
+
+        // Hover effect elements
+        const icon = card.querySelector<HTMLElement>("svg");
+        const title = card.querySelector<HTMLElement>("h3");
+
+        // Hover effects
+        const handleMouseEnter = () => {
+          gsap.to(card, {
+            y: -5,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+
+          if (icon) {
+            gsap.to(icon, {
+              scale: 1.1,
+              rotate: 3,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          }
+
+          if (title) {
+            gsap.to(title, {
+              color: "hsl(var(--primary))",
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          }
+        };
+
+        const handleMouseLeave = () => {
+          gsap.to(card, {
+            y: 0,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+
+          if (icon) {
+            gsap.to(icon, {
+              scale: 1,
+              rotate: 0,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          }
+
+          if (title) {
+            gsap.to(title, {
+              color: "hsl(var(--foreground))",
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          }
+        };
+
+        // Add event listeners
+        card.addEventListener("mouseenter", handleMouseEnter);
+        card.addEventListener("mouseleave", handleMouseLeave);
+
+        // Cleanup
+        return () => {
+          card.removeEventListener("mouseenter", handleMouseEnter);
+          card.removeEventListener("mouseleave", handleMouseLeave);
+        };
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden bg-gradient-to-b from-background via-muted/30 to-background">
-      {/* Decorative Elements */}
+    <section
+      ref={sectionRef}
+      className="py-16 sm:py-20 lg:py-24 relative overflow-hidden bg-gradient-to-b from-background via-muted/30 to-background"
+    >
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-12 sm:mb-16"
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="inline-block mb-4"
-          >
+        <div className="text-center mb-12 sm:mb-16 feature-heading">
+          <div className="inline-block mb-4 feature-badge">
             <div className="px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 border border-primary/20">
               <span className="text-sm font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
                 ویژگی‌های پیشرفته
               </span>
             </div>
-          </motion.div>
+          </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 sm:mb-6">
             <span className="bg-clip-text text-transparent bg-gradient-to-l from-primary via-secondary to-primary">
               همه چیز برای موفقیت شما
             </span>
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4 feature-description">
             ابزارهای کامل و حرفه‌ای برای مدیریت چرخه کامل مقالات علمی
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative"
-        >
-          {/* Custom Navigation Buttons */}
+        <div className="relative">
           <div className="hidden lg:flex justify-between items-center mb-8 max-w-6xl mx-auto px-4">
             <button className="swiper-button-prev-custom w-12 h-12 rounded-full bg-primary/10 hover:bg-primary hover:text-white border-2 border-primary/30 hover:border-primary flex items-center justify-center transition-smooth group">
               <ArrowRight className="w-5 h-5 group-hover:scale-110 transition-smooth" />
@@ -123,7 +241,7 @@ const FeaturesSection = () => {
               dynamicBullets: true,
             }}
             autoplay={{
-              delay: 4000,
+              delay: 2000,
               disableOnInteraction: false,
               pauseOnMouseEnter: true,
             }}
@@ -141,36 +259,26 @@ const FeaturesSection = () => {
           >
             {features.map((feature, index) => (
               <SwiperSlide key={index}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="h-full"
-                >
+                <div className="feature-card h-full">
                   <div className="group bg-card border-2 border-border hover:border-primary/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 h-full shadow-lg hover:shadow-elegant transition-smooth relative overflow-hidden">
-                    {/* Gradient Background on Hover */}
                     <div
                       className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-smooth`}
                     />
 
                     <div className="relative z-10">
-                      {/* Icon */}
                       <div
-                        className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-5 sm:mb-6 group-hover:scale-110 group-hover:rotate-3 transition-smooth shadow-lg`}
+                        className={`feature-icon w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-5 sm:mb-6 transition-smooth shadow-lg`}
                       >
                         <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                       </div>
 
-                      {/* Content */}
-                      <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-foreground group-hover:text-primary transition-smooth">
+                      <h3 className="feature-title text-xl sm:text-2xl font-bold mb-3 sm:mb-4 transition-smooth">
                         {feature.title}
                       </h3>
                       <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4 sm:mb-6">
                         {feature.description}
                       </p>
 
-                      {/* Details List */}
                       <ul className="space-y-2">
                         {feature.details.map((detail, i) => (
                           <li
@@ -186,14 +294,14 @@ const FeaturesSection = () => {
                       </ul>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
-        </motion.div>
+        </div>
       </div>
 
-      <style>{`
+      <style jsx global>{`
         .swiper-pagination-bullet {
           background: hsl(var(--primary));
           opacity: 0.3;
@@ -205,16 +313,10 @@ const FeaturesSection = () => {
           opacity: 1;
           width: 24px;
           border-radius: 4px;
-          background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
         }
-        @media (max-width: 640px) {
-          .swiper-pagination-bullet {
-            width: 6px;
-            height: 6px;
-          }
-          .swiper-pagination-bullet-active {
-            width: 20px;
-          }
+        .swiper-button-disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
         }
       `}</style>
     </section>

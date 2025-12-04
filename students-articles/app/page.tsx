@@ -1,8 +1,15 @@
 import CTASection from "@/components/CTASection";
-import FeaturesSection from "@/components/FeatureSection";
 import HeroSection from "@/components/HeroSection.client";
-import ProcessSection from "@/components/ProcessSection";
 import { cookies } from "next/headers";
+import dynamic from "next/dynamic";
+
+const FeaturesSection = dynamic(
+  () => import("@/components/FeatureSection"),
+  {}
+);
+const ProcessSection = dynamic(
+  () => import("@/components/ProcessSection.client")
+);
 
 const Home = async () => {
   const cookieStore = await cookies();
