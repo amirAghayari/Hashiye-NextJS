@@ -54,23 +54,15 @@ const HeroSectionContent = () => {
               </p>
 
               <div className="hero-buttons flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link href="/auth/signin">
+                <Link href="/auth/register">
                   <Button
                     size="lg"
                     className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 shadow-elegant hover:shadow-glow transition-smooth gradient-primary group"
                   >
                     <span>شروع رایگان</span>
-                    <ArrowLeft className="mr-2 w-5 h-5 group-hover:-translate-x-2 transition-smooth" />
+                    <ArrowLeft className="mr-2 w-5 h-5 group-hover:-translate-x-2 transition-all duration-200 ease-in-out" />
                   </Button>
                 </Link>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 border-2 border-primary/30 hover:border-primary hover:bg-primary/10 transition-smooth"
-                >
-                  <BookOpen className="ml-2 w-5 h-5" />
-                  <span>مشاهده راهنما</span>
-                </Button>
               </div>
             </div>
 

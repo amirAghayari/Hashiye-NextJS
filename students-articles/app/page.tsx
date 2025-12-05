@@ -2,6 +2,8 @@ import CTASection from "@/components/CTASection";
 import HeroSection from "@/components/HeroSection.client";
 import { cookies } from "next/headers";
 import dynamic from "next/dynamic";
+import CTASectionClient from "@/components/CTASection.client";
+import HeroSectionClient from "@/components/HeroSection.client";
 
 const FeaturesSection = dynamic(
   () => import("@/components/FeatureSection"),
@@ -17,10 +19,10 @@ const Home = async () => {
 
   return (
     <div className="min-h-screen">
-      <HeroSection />
+      <HeroSectionClient />
       <FeaturesSection />
       <ProcessSection />
-      <CTASection />
+      <CTASectionClient />
     </div>
   );
 };

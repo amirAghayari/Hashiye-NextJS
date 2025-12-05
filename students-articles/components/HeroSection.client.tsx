@@ -1,17 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import HeroSectionContent from "./HeroSection";
 
 gsap.registerPlugin(ScrollTrigger);
-const HeroSection = () => {
-  const sectionRef = useRef(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Parallax effect for background
+const HeroSectionClient = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      /** 🔵 Parallax Background */
       gsap.to(".hero-background", {
         y: 150,
         opacity: 0,
@@ -24,7 +26,7 @@ const HeroSection = () => {
         },
       });
 
-      // Floating orbs animation
+      /** 🔵 Floating Orbs */
       gsap.to(".hero-orb-1", {
         scale: 1.2,
         x: 30,
@@ -45,7 +47,7 @@ const HeroSection = () => {
         ease: "power1.inOut",
       });
 
-      // Text content entrance animations
+      /** 🔵 Text Entrance Timeline */
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       tl.from(".hero-badge", {
@@ -54,44 +56,12 @@ const HeroSection = () => {
         duration: 0.8,
         delay: 0.2,
       })
-        .from(
-          ".hero-heading-1",
-          {
-            opacity: 0,
-            y: 20,
-            duration: 0.8,
-          },
-          "-=0.5"
-        )
-        .from(
-          ".hero-heading-2",
-          {
-            opacity: 0,
-            y: 20,
-            duration: 0.8,
-          },
-          "-=0.7"
-        )
-        .from(
-          ".hero-paragraph",
-          {
-            opacity: 0,
-            y: 20,
-            duration: 0.8,
-          },
-          "-=0.6"
-        )
-        .from(
-          ".hero-buttons",
-          {
-            opacity: 0,
-            y: 20,
-            duration: 0.8,
-          },
-          "-=0.6"
-        );
+        .from(".hero-heading-1", { opacity: 0, y: 20, duration: 0.8 }, "-=0.5")
+        .from(".hero-heading-2", { opacity: 0, y: 20, duration: 0.8 }, "-=0.7")
+        .from(".hero-paragraph", { opacity: 0, y: 20, duration: 0.8 }, "-=0.6")
+        .from(".hero-buttons", { opacity: 0, y: 20, duration: 0.8 }, "-=0.6");
 
-      // Visual element animations
+      /** 🔵 Main Card Entrance */
       gsap.from(".hero-main-card", {
         opacity: 0,
         x: 50,
@@ -99,7 +69,7 @@ const HeroSection = () => {
         delay: 0.3,
       });
 
-      // Main card floating animation
+      /** 🔵 Main Card Floating */
       gsap.to(".hero-main-card", {
         y: -20,
         duration: 6,
@@ -108,7 +78,7 @@ const HeroSection = () => {
         ease: "power1.inOut",
       });
 
-      // Floating cards animations
+      /** 🔵 Floating Cards */
       gsap.to(".hero-floating-card-1", {
         y: 15,
         x: 10,
@@ -127,7 +97,7 @@ const HeroSection = () => {
         ease: "power1.inOut",
       });
 
-      // Scroll indicator animation
+      /** 🔵 Scroll Indicator */
       gsap.from(".hero-scroll-indicator", {
         opacity: 0,
         duration: 0.8,
@@ -141,10 +111,10 @@ const HeroSection = () => {
         yoyo: true,
         ease: "power1.inOut",
       });
-    }, sectionRef);
+    },
+    { scope: sectionRef } // ← useGSAP scope برای تمیزکاری اتوماتیک
+  );
 
-    return () => ctx.revert();
-  }, []);
   return (
     <div ref={sectionRef}>
       <HeroSectionContent />
@@ -152,4 +122,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection;
+export default HeroSectionClient;

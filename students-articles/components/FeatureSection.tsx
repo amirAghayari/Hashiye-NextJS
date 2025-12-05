@@ -18,6 +18,7 @@ import "swiper/css/pagination";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 
 const features = [
   {
@@ -62,53 +63,44 @@ gsap.registerPlugin(ScrollTrigger);
 const FeaturesSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!sectionRef.current) return;
+  useGSAP(
+    () => {
+      const el = sectionRef.current;
+      if (!el) return;
 
-    const ctx = gsap.context(() => {
-      const sectionEl = sectionRef.current as HTMLElement;
+      const badge = el.querySelector(".feature-badge");
+      const heading = el.querySelector("h2");
+      const description = el.querySelector(".feature-description");
+      const cards = el.querySelectorAll(".feature-card");
 
-      // Get elements with type safety
-      const heading = sectionEl.querySelector<HTMLElement>("h2");
-      const badge = sectionEl.querySelector<HTMLElement>(".inline-flex");
-      const description = sectionEl.querySelector<HTMLElement>(
-        "p.text-muted-foreground"
-      );
-      const cards = sectionEl.querySelectorAll<HTMLElement>(".feature-card");
-
-      // Animation function with type safety
-      const animateElement = (
-        element: HTMLElement | null,
-        delay = 0,
-        y = 0
-      ) => {
-        if (!element) return;
+      const fadeIn = (target: Element | null, delay = 0) => {
+        if (!target) return;
 
         gsap.fromTo(
-          element,
-          { opacity: 0, y: y + 30 },
+          target,
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
-            y: y,
+            y: 0,
             duration: 0.8,
-            delay: delay,
+            delay,
             ease: "power2.out",
             scrollTrigger: {
-              trigger: element,
+              trigger: target,
               start: "top 90%",
-              toggleActions: "play none none none",
             },
           }
         );
       };
 
-      // Animate heading elements
-      if (badge) animateElement(badge, 0);
-      if (heading) animateElement(heading, 0.1);
-      if (description) animateElement(description, 0.2);
+      fadeIn(badge, 0);
+      fadeIn(heading, 0.1);
+      fadeIn(description, 0.2);
 
-      // Animate feature cards
       cards.forEach((card, index) => {
+        const icon = card.querySelector("svg");
+        const title = card.querySelector("h3");
+
         gsap.from(card, {
           opacity: 0,
           y: 40,
@@ -121,75 +113,32 @@ const FeaturesSection = () => {
           },
         });
 
-        // Hover effect elements
-        const icon = card.querySelector<HTMLElement>("svg");
-        const title = card.querySelector<HTMLElement>("h3");
-
-        // Hover effects
-        const handleMouseEnter = () => {
-          gsap.to(card, {
-            y: -5,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-
-          if (icon) {
-            gsap.to(icon, {
-              scale: 1.1,
-              rotate: 3,
-              duration: 0.3,
-              ease: "power2.out",
-            });
-          }
-
-          if (title) {
+        const enter = () => {
+          gsap.to(card, { y: -5, duration: 0.3 });
+          icon && gsap.to(icon, { scale: 1.1, rotate: 3, duration: 0.3 });
+          title &&
             gsap.to(title, {
               color: "hsl(var(--primary))",
               duration: 0.3,
-              ease: "power2.out",
             });
-          }
         };
 
-        const handleMouseLeave = () => {
-          gsap.to(card, {
-            y: 0,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-
-          if (icon) {
-            gsap.to(icon, {
-              scale: 1,
-              rotate: 0,
-              duration: 0.3,
-              ease: "power2.out",
-            });
-          }
-
-          if (title) {
+        const leave = () => {
+          gsap.to(card, { y: 0, duration: 0.3 });
+          icon && gsap.to(icon, { scale: 1, rotate: 0, duration: 0.3 });
+          title &&
             gsap.to(title, {
               color: "hsl(var(--foreground))",
               duration: 0.3,
-              ease: "power2.out",
             });
-          }
         };
 
-        // Add event listeners
-        card.addEventListener("mouseenter", handleMouseEnter);
-        card.addEventListener("mouseleave", handleMouseLeave);
-
-        // Cleanup
-        return () => {
-          card.removeEventListener("mouseenter", handleMouseEnter);
-          card.removeEventListener("mouseleave", handleMouseLeave);
-        };
+        card.addEventListener("mouseenter", enter);
+        card.addEventListener("mouseleave", leave);
       });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+    },
+    { scope: sectionRef }
+  );
 
   return (
     <section
