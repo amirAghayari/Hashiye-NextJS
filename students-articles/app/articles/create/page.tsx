@@ -83,7 +83,7 @@ export default function CreateArticlePage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-base-content mb-2">
             ایجاد مقاله جدید
           </h1>
           <p className="text-gray-600">

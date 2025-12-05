@@ -2,7 +2,7 @@
 
 // TODO : کامپوننت بندی کن
 
-import { useState, useActionState } from "react"; // useActionState is React 19 hook
+import { useState, useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -297,7 +297,7 @@ export default function ArticleInteractiveView({
                         {grade.comment && (
                           <div className="mt-2 text-gray-700">
                             <span className="font-medium text-sm">
-                              توضیحات:{" "}
+                              توضیحات:
                             </span>
                             {grade.comment}
                           </div>
@@ -313,7 +313,7 @@ export default function ArticleInteractiveView({
             </div>
 
             {isProfessor && isGrading && (
-              <Card className="border-blue-200 bg-blue-50">
+              <Card className="border-blue-200 bg-background">
                 <CardHeader>
                   <CardTitle className="text-lg">نمره‌دهی جدید</CardTitle>
                 </CardHeader>
