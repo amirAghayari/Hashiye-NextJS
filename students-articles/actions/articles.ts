@@ -2,11 +2,9 @@
 
 import connectDB from "@/lib/server/mongoose";
 import Article from "@/models/Article";
-// فرض بر این است که این فایل‌ها وجود دارند
 import { ArticleSchema } from "@/lib/validations/articleValidation";
 import { getCurrentUser } from "@/lib/server/getCurrentUser";
 
-// تعریف تایپ‌ها برای جلوگیری از ارورهای تایپ‌اسکریپت
 type ActionState = {
   success: boolean;
   error?: string;

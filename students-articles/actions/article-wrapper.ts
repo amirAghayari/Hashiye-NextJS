@@ -55,7 +55,6 @@ export async function deleteArticleAction(
   const result = await deleteArticle(id);
 
   if (result.success) {
-    // موفقیت آمیز
   } else {
     return { success: false, message: result.error || "خطا در حذف مقاله" };
   }
@@ -78,18 +77,12 @@ export async function gradeArticleAction(
     return { success: false, message: "شناسه مقاله نامعتبر است" };
   }
 
-  // فراخوانی متد جدید شما که (prevState, formData) می‌گیرد
-  // ما prevState فعلی را پاس می‌دهیم (هرچند شاید استفاده نشود)
   const gradePrevState: GradeState = { success: false };
   const result = await gradeArticle(gradePrevState, formData);
 
   if (result.success) {
-    // 1. پاکسازی کش نکست
     revalidatePath(`/articles/${articleId}`);
 
-    // 2. دریافت مجدد مقاله برای آپدیت UI
-    // چون متد gradeArticle شما آبجکت مقاله را برنمی‌گرداند، ما دستی آن را می‌گیریم
-    // تا لیست نمرات در فرانت‌اند بلافاصله آپدیت شود
     const freshData = await getArticleById(articleId);
 
     return {

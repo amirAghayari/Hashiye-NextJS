@@ -189,7 +189,6 @@ export default function CreateArticlePage() {
                 </div>
               )}
 
-              {/* تگ‌ها به صورت مخفی ارسال میشن */}
               <input type="hidden" name="tags" value={tags.join(", ")} />
 
               <div className="flex gap-4">
