@@ -34,7 +34,7 @@ export default function ArticleInteractiveView({
 
   const [deleteState, deleteAction, isDeleting] = useActionState(
     deleteArticleAction,
-    initialState
+    initialState,
   );
 
   // The wrapper actions only know the id from the form, so it is appended here.
@@ -48,7 +48,7 @@ export default function ArticleInteractiveView({
       }
       return result;
     },
-    initialState
+    initialState,
   );
 
   const [gradeState, gradeAction, isSubmittingGrade] = useActionState(
@@ -61,34 +61,41 @@ export default function ArticleInteractiveView({
       }
       return result;
     },
-    initialState
+    initialState,
   );
 
-  const message = updateState?.message || deleteState?.message || gradeState?.message;
+  const message =
+    updateState?.message || deleteState?.message || gradeState?.message;
   const messageIsSuccess = Boolean(updateState?.success || gradeState?.success);
 
   // Check if professor has already graded this article
   const hasGraded = article.grades.some(
-    (grade) => String(grade.professor._id) === String(initialArticle.author?._id)
+    (grade) =>
+      String(grade.professor._id) === String(initialArticle.author?._id),
   );
 
-  const gradingAction = isProfessor && !hasGraded ? (
-    isGrading ? (
-      <form action={gradeAction} className="mt-10 border-t pt-8">
-        <h3 className="type-subhead mb-6">نمرهٔ شما</h3>
-        <GradeFields
-          pending={isSubmittingGrade}
-          onCancel={() => setIsGrading(false)}
-          idPrefix="article-grade"
-          autoFocus
-        />
-      </form>
-    ) : (
-      <Button variant="mark" className="mt-10" onClick={() => setIsGrading(true)}>
-        نمره‌دهی به این مقاله
-      </Button>
-    )
-  ) : null;
+  const gradingAction =
+    isProfessor && !hasGraded ? (
+      isGrading ? (
+        <form action={gradeAction} className="mt-10 border-t pt-8">
+          <h3 className="type-subhead mb-6">نمرهٔ شما</h3>
+          <GradeFields
+            pending={isSubmittingGrade}
+            onCancel={() => setIsGrading(false)}
+            idPrefix="article-grade"
+            autoFocus
+          />
+        </form>
+      ) : (
+        <Button
+          variant="mark"
+          className="mt-10"
+          onClick={() => setIsGrading(true)}
+        >
+          نمره‌دهی به این نوشته
+        </Button>
+      )
+    ) : null;
 
   return (
     <>
@@ -98,21 +105,31 @@ export default function ArticleInteractiveView({
           className="inline-flex min-h-11 items-center gap-2 type-meta underline-offset-8 hover:underline"
         >
           <ArrowRight className="size-4" aria-hidden />
-          بازگشت به مقاله‌ها
+          بازگشت به نوشته‌ها
         </Link>
         {isOwner && !isEditing ? (
           <div className="flex flex-wrap items-center gap-3">
-            <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsEditing(true)}
+            >
               ویرایش
             </Button>
-            <DeleteArticle id={article._id} action={deleteAction} pending={isDeleting} />
+            <DeleteArticle
+              id={article._id}
+              action={deleteAction}
+              pending={isDeleting}
+            />
           </div>
         ) : null}
       </div>
 
       {message ? (
         <div className="page sticky top-4 z-40 pt-4">
-          <Notice tone={messageIsSuccess ? "success" : "error"}>{message}</Notice>
+          <Notice tone={messageIsSuccess ? "success" : "error"}>
+            {message}
+          </Notice>
         </div>
       ) : null}
 
@@ -137,7 +154,9 @@ export default function ArticleInteractiveView({
                   <ArticleBody content={article.content} tags={article.tags} />
                 </article>
               }
-              margin={<ArticleEvaluation article={article} action={gradingAction} />}
+              margin={
+                <ArticleEvaluation article={article} action={gradingAction} />
+              }
             />
           </div>
         </>

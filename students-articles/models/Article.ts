@@ -42,22 +42,22 @@ const gradeSchema = new Schema<IGrade>(
       default: Date.now,
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const articleSchema = new Schema<IArticle>(
   {
     title: {
       type: String,
-      required: [true, "عنوان مقاله الزامی است"],
+      required: [true, "عنوان نوشته الزامی است"],
       trim: true,
-      maxlength: [200, "عنوان مقاله نباید بیشتر از ۲۰۰ کاراکتر باشد"],
+      maxlength: [200, "عنوان نوشته نباید بیشتر از ۲۰۰ کاراکتر باشد"],
     },
     content: {
       type: String,
-      required: [true, "محتوای مقاله الزامی است"],
+      required: [true, "محتوای نوشته الزامی است"],
       trim: true,
-      minlength: [100, "محتوای مقاله باید حداقل ۱۰۰ کاراکتر باشد"],
+      minlength: [100, "محتوای نوشته باید حداقل ۱۰۰ کاراکتر باشد"],
     },
     category: {
       type: String,
@@ -79,7 +79,7 @@ const articleSchema = new Schema<IArticle>(
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "نویسنده مقاله الزامی است"],
+      required: [true, "نویسنده نوشته الزامی است"],
     },
     grades: [gradeSchema],
     averageScore: {
@@ -98,7 +98,7 @@ const articleSchema = new Schema<IArticle>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 articleSchema.index({ author: 1 });
@@ -111,7 +111,7 @@ articleSchema.pre("save", async function () {
     if (this.grades && this.grades.length > 0) {
       const totalScore = this.grades.reduce(
         (sum, grade) => sum + grade.score,
-        0
+        0,
       );
       this.averageScore = totalScore / this.grades.length;
     } else {

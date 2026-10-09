@@ -15,21 +15,16 @@ export function Hero() {
             <>
               <h1 id="hero-title" className="type-display">
                 <span className="rise block" style={stagger(0)}>
-                  مقاله می‌نویسی،
-                </span>
-                <span className="rise block" style={stagger(1)}>
-                  استاد در حاشیه‌اش
-                </span>
-                <span className="rise block" style={stagger(2)}>
-                  نمره می‌دهد.
+                  بستری برای انتشار نوشته‌ها و بازخورد علمی.
                 </span>
               </h1>
               <p
                 className="type-deck rise mt-10 max-w-[34rem] text-muted-foreground"
                 style={stagger(3)}
               >
-                حاشیه، بستری است برای انتشار مقاله‌های دانشجویی و داوری شفاف توسط اساتید.
-                دانشجو متن را ثبت می‌کند؛ استاد نمره‌ای از ۰ تا ۲۰ می‌دهد و در حاشیه بازخورد می‌نویسد.
+                حاشیه پلتفرمی برای به‌اشتراک‌گذاری نوشته‌های دانشجویی و دریافت
+                بازخورد از استادهاست؛ با امکان ارزیابی و نمره‌دهی شفاف برای
+                تقویت مهارت‌های نوشتاری و رشد علمی دانشجویان.
               </p>
               <div
                 className="rise mt-10 flex flex-wrap items-center gap-6"
@@ -49,7 +44,9 @@ export function Hero() {
           }
           margin={
             <figure className="rise" style={stagger(5)}>
-              <figcaption className="type-label">نمونه: حاشیهٔ استاد بر یک مقاله</figcaption>
+              <figcaption className="type-label">
+                نمونه: حاشیهٔ استاد بر یک نوشته
+              </figcaption>
               <div className="mt-6">
                 <ScoreMark score={18} size="xl" underline="load" />
               </div>

@@ -23,7 +23,10 @@ const initialState = {
 
 export default function CreateArticlePage() {
   const router = useRouter();
-  const [state, formAction, isPending] = useActionState(createArticle, initialState);
+  const [state, formAction, isPending] = useActionState(
+    createArticle,
+    initialState,
+  );
 
   useEffect(() => {
     if (state.success) {
@@ -33,7 +36,10 @@ export default function CreateArticlePage() {
 
   return (
     <>
-      <PageHeader title="مقالهٔ تازه" deck="عنوان، دسته‌بندی، متن و برچسب‌ها را وارد کنید." />
+      <PageHeader
+        title="نوشتهٔ تازه"
+        deck="عنوان، دسته‌بندی، متن و برچسب‌ها را وارد کنید."
+      />
       <div className="page">
         <Spread
           mainClassName="py-10 md:py-16"
@@ -48,12 +54,18 @@ export default function CreateArticlePage() {
                   minLength={5}
                   maxLength={200}
                   required
-                  placeholder="عنوان مقاله"
+                  placeholder="عنوان نوشته"
                   className="h-auto py-3 font-serif text-title font-bold"
                 />
               </Field>
               <Field label="دسته‌بندی" htmlFor="category">
-                <NativeSelect id="category" name="category" required defaultValue="">
+                <NativeSelect
+                  id="category"
+                  name="category"
+                  required
+                  className="bg-primary-foreground p-2"
+                  defaultValue=""
+                >
                   <option value="" disabled>
                     انتخاب کنید
                   </option>
@@ -64,15 +76,14 @@ export default function CreateArticlePage() {
                   ))}
                 </NativeSelect>
               </Field>
-              <Field label="متن مقاله" htmlFor="content">
+              <Field label="متن نوشته" htmlFor="content">
                 <Textarea
                   id="content"
                   name="content"
                   rows={14}
                   minLength={100}
-                  maxLength={10000}
                   required
-                  placeholder="متن کامل مقاله را اینجا بنویسید…"
+                  placeholder="متن کامل نوشته را اینجا بنویسید…"
                   className="min-h-96 leading-[2.05]"
                 />
               </Field>
@@ -84,7 +95,7 @@ export default function CreateArticlePage() {
 
               <div className="flex flex-wrap gap-3">
                 <Button type="submit" size="lg" disabled={isPending}>
-                  {isPending ? "در حال ثبت…" : "ثبت مقاله"}
+                  {isPending ? "در حال ثبت…" : "ثبت نوشته"}
                 </Button>
                 <Button asChild variant="outline" size="lg">
                   <Link href="/dashboard">انصراف</Link>
@@ -95,10 +106,15 @@ export default function CreateArticlePage() {
           margin={
             <div className="grid gap-6 lg:sticky lg:top-24">
               <MarginNote n={1}>عنوان باید بین ۵ تا ۲۰۰ نویسه باشد.</MarginNote>
-              <MarginNote n={2}>متن مقاله باید حداقل ۱۰۰ و حداکثر ۱۰٬۰۰۰ نویسه باشد.</MarginNote>
-              <MarginNote n={3}>تا ۱۰ برچسب بنویسید؛ هر برچسب حداکثر ۵۰ نویسه.</MarginNote>
+              <MarginNote n={2}>
+                متن نوشته باید حداقل ۱۰۰ و حداکثر ۱۰٬۰۰۰ نویسه باشد.
+              </MarginNote>
+              <MarginNote n={3}>
+                تا ۱۰ برچسب بنویسید؛ هر برچسب حداکثر ۵۰ نویسه.
+              </MarginNote>
               <MarginNote n={4}>
-                پس از ثبت، استادان می‌توانند نمره دهند و در حاشیه بازخورد بنویسند.
+                پس از ثبت، استادان می‌توانند نمره دهند و در حاشیه بازخورد
+                بنویسند.
               </MarginNote>
             </div>
           }

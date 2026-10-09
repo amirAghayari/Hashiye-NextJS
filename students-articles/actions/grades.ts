@@ -13,7 +13,7 @@ export type State = {
 
 export async function gradeArticle(
   prevState: State,
-  formData: FormData
+  formData: FormData,
 ): Promise<State> {
   try {
     const user = await requireUser();
@@ -34,10 +34,10 @@ export async function gradeArticle(
     await connectDB();
 
     const article = await Article.findById(validatedData.articleId);
-    if (!article) return { success: false, error: "مقاله یافت نشد" };
+    if (!article) return { success: false, error: "نوشته یافت نشد" };
 
     const existingIndex = article.grades.findIndex(
-      (g: any) => g.professor.toString() === user._id.toString()
+      (g: any) => g.professor.toString() === user._id.toString(),
     );
 
     const newGrade = {
@@ -70,7 +70,7 @@ export async function getArticlesForGrading() {
 
     if (user.role !== "professor") {
       throw new Error(
-        "فقط اساتید می‌توانند مقالات را برای نمره‌دهی مشاهده کنند"
+        "فقط اساتید می‌توانند مقالات را برای نمره‌دهی مشاهده کنند",
       );
     }
 
@@ -94,11 +94,11 @@ export async function removeGrade(articleId: string) {
 
     const article = await Article.findById(articleId);
     if (!article) {
-      throw new Error("مقاله یافت نشد");
+      throw new Error("نوشته یافت نشد");
     }
 
     article.grades = article.grades.filter(
-      (grade) => grade.professor.toString() !== user._id.toString()
+      (grade) => grade.professor.toString() !== user._id.toString(),
     );
 
     await article.save();

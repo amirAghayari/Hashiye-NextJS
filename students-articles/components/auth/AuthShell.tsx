@@ -13,18 +13,23 @@ export function AuthShell({ title, deck, children, footer }: AuthShellProps) {
   return (
     <div className="grid min-h-[80dvh] lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       <aside className="flex flex-col justify-between gap-12 bg-foreground p-6 text-background md:p-10 lg:gap-16 lg:p-14">
-        <Link href="/" className="flex w-fit items-center gap-2" aria-label="حاشیه، صفحهٔ اصلی">
+        <Link
+          href="/"
+          className="flex w-fit items-center gap-2"
+          aria-label="حاشیه، صفحهٔ اصلی"
+        >
           <span className="text-xl font-extrabold">حاشیه</span>
           <span aria-hidden className="size-2 rounded-full bg-mark" />
         </Link>
         <div className="border-s-2 border-mark ps-6">
           <p className="font-serif text-title font-bold lg:text-headline">
-            هر مقاله،
+            هر نوشته،
             <br />
             یک حاشیه.
           </p>
           <p className="type-meta mt-6 max-w-sm opacity-80">
-            دانشجو می‌نویسد؛ استاد نمره می‌دهد و در حاشیه توضیح می‌نویسد.
+            هر نوشته فرصتی برای یادگیری است؛ استاد نمره می‌دهد و نکاتش را در
+            حاشیه می‌نویسد.
           </p>
         </div>
       </aside>

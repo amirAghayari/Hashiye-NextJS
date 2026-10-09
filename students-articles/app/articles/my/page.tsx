@@ -9,66 +9,51 @@ import {
   useRef,
   useState,
 } from "react";
-import { getArticles } from "@/actions/articles";
-import type { ArticlesState } from "@/types/article";
+import { getMyArticles } from "@/actions/articles";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/editorial/PageHeader";
 import { Spread } from "@/components/editorial/Spread";
 import { StateMessage } from "@/components/states/StateMessage";
 import { ArticleLead } from "@/components/dashboard/ArticleLead";
+import type { Article } from "@/types/article";
 import { ArticleRow } from "@/components/dashboard/ArticleRow";
 import { EmptyIndex } from "@/components/dashboard/EmptyIndex";
 import { FilterPanel } from "@/components/dashboard/FilterPanel";
 import { IndexSkeleton } from "@/components/dashboard/IndexSkeleton";
-import { Pagination } from "@/components/dashboard/Pagination";
 import { faNum } from "@/lib/format";
 import { normalizeFa } from "@/lib/normalizeFa";
 import { cn } from "@/lib/utils";
 
-const PAGE_SIZE = 10;
-const ALL = "all";
+type MyArticlesState = {
+  success: boolean;
+  error?: string;
+  articles?: Article[];
+};
 
-const initialState: ArticlesState = {
+const initialState: MyArticlesState = {
   success: false,
   error: undefined,
   articles: [],
-  pagination: { page: 1, limit: PAGE_SIZE, total: 0, pages: 0 },
 };
 
-interface DashboardContentProps {
-  user: { role: string; fullName: string };
-}
-
-export default function DashboardContent({ user }: DashboardContentProps) {
-  const isStudent = user.role === "student";
-
+export default function MyArticlesPage() {
   const [state, formAction, isLoading] = useActionState<
-    ArticlesState,
+    MyArticlesState,
     FormData
-  >(getArticles, initialState);
+  >(getMyArticles, initialState);
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState(ALL);
+  const [category, setCategory] = useState("all");
 
-  const loadPage = (page: number) => {
-    const formData = new FormData();
-    formData.append("page", String(page));
-    formData.append("limit", String(PAGE_SIZE));
-    startTransition(() => formAction(formData));
-  };
-
-  // First load, once. (Retrying a failed load is the person's choice, not an effect's.)
   const requested = useRef(false);
   useEffect(() => {
     if (requested.current) return;
     requested.current = true;
-    loadPage(1);
+    const formData = new FormData();
+    startTransition(() => formAction(formData));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const articles = useMemo(() => state.articles ?? [], [state.articles]);
-  const pagination = state.pagination;
-  const page = pagination?.page ?? 1;
-  const pages = pagination?.pages ?? 0;
   const hasLoaded = state.success || Boolean(state.error);
 
   const counts = useMemo(() => {
@@ -79,12 +64,12 @@ export default function DashboardContent({ user }: DashboardContentProps) {
     return result;
   }, [articles]);
 
-  const isFiltering = query.trim() !== "" || category !== ALL;
+  const isFiltering = query.trim() !== "" || category !== "all";
 
   const visible = useMemo(() => {
     const needle = normalizeFa(query);
     return articles.filter((article) => {
-      if (category !== ALL && article.category !== category) return false;
+      if (category !== "all" && article.category !== category) return false;
       if (!needle) return true;
       const haystack = normalizeFa(
         [
@@ -100,16 +85,8 @@ export default function DashboardContent({ user }: DashboardContentProps) {
 
   const resetFilters = () => {
     setQuery("");
-    setCategory(ALL);
+    setCategory("all");
   };
-
-  const changePage = (next: number) => {
-    window.scrollTo({ top: 0 });
-    loadPage(next);
-  };
-
-  const [lead, ...rest] = visible;
-  const offset = isFiltering ? 0 : (page - 1) * PAGE_SIZE;
 
   let content: React.ReactNode;
   if (!hasLoaded) {
@@ -118,23 +95,31 @@ export default function DashboardContent({ user }: DashboardContentProps) {
     content = (
       <StateMessage
         tone="error"
-        title="بارگذاری نوشته‌ها ناموفق بود."
+        title="بارگذاری نوشته‌های شما ناموفق بود."
         description={state.error}
       >
-        <Button onClick={() => loadPage(page)}>تلاش دوباره</Button>
+        <Button
+          onClick={() => {
+            const fd = new FormData();
+            startTransition(() => formAction(fd));
+          }}
+        >
+          تلاش دوباره
+        </Button>
       </StateMessage>
     );
   } else if (articles.length === 0) {
-    content = <EmptyIndex kind="empty" role={user.role} />;
+    content = <EmptyIndex kind="empty" role="student" />;
   } else if (visible.length === 0) {
     content = <EmptyIndex kind="filtered" onReset={resetFilters} />;
   } else {
+    const [lead, ...rest] = visible;
     content = (
       <>
         <p className="type-label mb-6" aria-live="polite">
           {isFiltering
-            ? `${faNum(visible.length)} نوشته از ${faNum(articles.length)} نوشتهٔ این صفحه`
-            : `${faNum(pagination?.total ?? articles.length)} نوشته`}
+            ? `${faNum(visible.length)} نوشته از ${faNum(articles.length)} نوشتهٔ شما`
+            : `${faNum(articles.length)} نوشته`}
         </p>
         <ol
           aria-busy={isLoading}
@@ -148,17 +133,11 @@ export default function DashboardContent({ user }: DashboardContentProps) {
             <ArticleRow
               key={article._id}
               article={article}
-              number={offset + i + 2}
+              number={i + 2}
               index={i}
             />
           ))}
         </ol>
-        <Pagination
-          page={page}
-          pages={pages}
-          disabled={isLoading}
-          onChange={changePage}
-        />
       </>
     );
   }
@@ -166,22 +145,12 @@ export default function DashboardContent({ user }: DashboardContentProps) {
   return (
     <>
       <PageHeader
-        title={isStudent ? "نوشته‌های من" : "نوشته‌های دانشجویان"}
-        deck={
-          isStudent
-            ? "نوشته‌های شما، به همراه نمره‌ها و بازخوردهای استادان در حاشیه آن‌ها."
-            : "برای مطالعه و نمره‌دادن، یکی از نوشته‌ها را انتخاب کنید."
-        }
+        title="نوشته‌های من"
+        deck="نوشته‌هایی که شما نوشته‌ید، به همراه نمره‌ها و بازخوردهای استادان در حاشیه آن‌ها."
         actions={
-          isStudent ? (
-            <Button asChild size="lg">
-              <Link href="/articles/create">نوشتن نوشته</Link>
-            </Button>
-          ) : (
-            <Button asChild variant="outline" size="lg">
-              <Link href="/grades">نمره‌دهی</Link>
-            </Button>
-          )
+          <Button asChild size="lg">
+            <Link href="/articles/create">نوشتن نوشته جدید</Link>
+          </Button>
         }
       />
       <div className="page">
@@ -201,7 +170,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
                 onCategoryChange={setCategory}
                 counts={counts}
                 total={articles.length}
-                paged={pages > 1}
+                paged={false}
               />
             ) : null
           }

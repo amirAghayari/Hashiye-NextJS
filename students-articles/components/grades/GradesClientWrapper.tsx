@@ -13,23 +13,30 @@ interface GradesClientWrapperProps {
   error?: string;
 }
 
-export function GradesClientWrapper({ initialArticles, error }: GradesClientWrapperProps) {
+export function GradesClientWrapper({
+  initialArticles,
+  error,
+}: GradesClientWrapperProps) {
   return (
     <GradesProvider>
       <PageHeader
         title="نمره‌دهی"
-        deck="مقاله‌ای را از فهرست انتخاب کنید، مطالعه نمایید و نمره‌دهی کنید."
+        deck="نوشته‌ای را از فهرست انتخاب کنید، مطالعه نمایید و نمره‌دهی کنید."
       />
       <div className="page">
         {error ? (
           <div className="py-10 md:py-16">
-            <StateMessage tone="error" title="مقاله‌ها بارگذاری نشدند." description={error} />
+            <StateMessage
+              tone="error"
+              title="نوشته‌ها بارگذاری نشدند."
+              description={error}
+            />
           </div>
         ) : initialArticles.length === 0 ? (
           <div className="py-10 md:py-16">
             <StateMessage
-              title="مقاله‌ای برای نمره‌دهی موجود نیست."
-              description="وقتی دانشجویان مقاله منتشر کنند، اینجا در فهرست ظاهر می‌شوند."
+              title="نوشته‌ای برای نمره‌دهی موجود نیست."
+              description="وقتی دانشجویان نوشته منتشر کنند، اینجا در فهرست ظاهر می‌شوند."
             />
           </div>
         ) : (

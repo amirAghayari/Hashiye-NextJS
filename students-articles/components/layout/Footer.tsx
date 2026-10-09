@@ -17,7 +17,8 @@ export default function Footer() {
             <span aria-hidden className="size-2 rounded-full bg-mark" />
           </p>
           <p className="type-meta mt-4 max-w-sm text-muted-foreground">
-            نشریهٔ مقالات دانشجویی: دانشجو مقاله می‌نویسد، استاد نمره می‌دهد و در حاشیه توضیح می‌نویسد.
+            نشریهٔ مقالات دانشجویی: دانشجو نوشته می‌نویسد، استاد نمره می‌دهد و
+            در حاشیه توضیح می‌نویسد.
           </p>
         </div>
 
@@ -43,11 +44,21 @@ export default function Footer() {
             <li>
               ایمیل:{" "}
               <a
-                href="mailto:info@hasheh.ir"
+                href="mailto:amiraghayari2119@gmail.com"
                 dir="ltr"
                 className="underline-offset-8 hover:underline"
               >
-                info@hasheh.ir
+                amiraghayari2119@gmail.com
+              </a>
+            </li>
+            <li>
+              تماس:
+              <a
+                href="call:+989331052119"
+                dir="ltr"
+                className="underline-offset-8 hover:underline"
+              >
+                09331052119
               </a>
             </li>
           </ul>

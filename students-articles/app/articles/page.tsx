@@ -35,13 +35,7 @@ const initialState: ArticlesState = {
   pagination: { page: 1, limit: PAGE_SIZE, total: 0, pages: 0 },
 };
 
-interface DashboardContentProps {
-  user: { role: string; fullName: string };
-}
-
-export default function DashboardContent({ user }: DashboardContentProps) {
-  const isStudent = user.role === "student";
-
+export default function ArticlesPage() {
   const [state, formAction, isLoading] = useActionState<
     ArticlesState,
     FormData
@@ -56,7 +50,6 @@ export default function DashboardContent({ user }: DashboardContentProps) {
     startTransition(() => formAction(formData));
   };
 
-  // First load, once. (Retrying a failed load is the person's choice, not an effect's.)
   const requested = useRef(false);
   useEffect(() => {
     if (requested.current) return;
@@ -125,7 +118,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
       </StateMessage>
     );
   } else if (articles.length === 0) {
-    content = <EmptyIndex kind="empty" role={user.role} />;
+    content = <EmptyIndex kind="empty" role="guest" />;
   } else if (visible.length === 0) {
     content = <EmptyIndex kind="filtered" onReset={resetFilters} />;
   } else {
@@ -166,22 +159,12 @@ export default function DashboardContent({ user }: DashboardContentProps) {
   return (
     <>
       <PageHeader
-        title={isStudent ? "نوشته‌های من" : "نوشته‌های دانشجویان"}
-        deck={
-          isStudent
-            ? "نوشته‌های شما، به همراه نمره‌ها و بازخوردهای استادان در حاشیه آن‌ها."
-            : "برای مطالعه و نمره‌دادن، یکی از نوشته‌ها را انتخاب کنید."
-        }
+        title="همهٔ نوشته‌ها"
+        deck="نوشته‌های دانشجویان را مرور کنید. برای مطالعه یا نمره‌دهی یکی را انتخاب کنید."
         actions={
-          isStudent ? (
-            <Button asChild size="lg">
-              <Link href="/articles/create">نوشتن نوشته</Link>
-            </Button>
-          ) : (
-            <Button asChild variant="outline" size="lg">
-              <Link href="/grades">نمره‌دهی</Link>
-            </Button>
-          )
+          <Button asChild variant="outline" size="lg">
+            <Link href="/articles/my">نوشته‌های من</Link>
+          </Button>
         }
       />
       <div className="page">

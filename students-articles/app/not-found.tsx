@@ -7,10 +7,10 @@ export default function NotFound() {
     <div className="page py-16">
       <StateMessage
         title="این صفحه پیدا نشد."
-        description="نشانی را بررسی کنید یا به فهرست مقاله‌ها برگردید."
+        description="نشانی را بررسی کنید یا به فهرست نوشته‌ها برگردید."
       >
         <Button asChild>
-          <Link href="/dashboard">مقاله‌ها</Link>
+          <Link href="/dashboard">نوشته‌ها</Link>
         </Button>
         <Button asChild variant="outline">
           <Link href="/">صفحهٔ اصلی</Link>

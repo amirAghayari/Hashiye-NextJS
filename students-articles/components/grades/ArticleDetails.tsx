@@ -13,15 +13,21 @@ export function ArticleDetails() {
 
   // On small screens the reader sits below the list, so bring it into view.
   useEffect(() => {
-    if (!selectedId || !window.matchMedia("(max-width: 1023px)").matches) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    panel.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    if (!selectedId || !window.matchMedia("(max-width: 1023px)").matches)
+      return;
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    panel.current?.scrollIntoView({
+      behavior: reduce ? "auto" : "smooth",
+      block: "start",
+    });
   }, [selectedId]);
 
   if (!selectedArticle) {
     return (
       <p className="type-deck text-muted-foreground">
-        مقاله‌ای را از فهرست انتخاب کنید تا اینجا مطالعه و نمره‌دهی کنید.
+        نوشته‌ای را از فهرست انتخاب کنید تا اینجا مطالعه و نمره‌دهی کنید.
       </p>
     );
   }
@@ -32,7 +38,10 @@ export function ArticleDetails() {
   const hasGraded = false; // This will be determined server-side
 
   return (
-    <div ref={panel} className="scroll-mt-6 lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)] lg:overflow-y-auto lg:pe-2">
+    <div
+      ref={panel}
+      className="scroll-mt-6 lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)] lg:overflow-y-auto lg:pe-2"
+    >
       <p className="type-label">
         {selectedArticle.author.fullName}، {selectedArticle.author.university}
       </p>
@@ -45,7 +54,10 @@ export function ArticleDetails() {
         />
       </div>
       <div className="mt-10">
-        <ArticleBody content={selectedArticle.content} tags={selectedArticle.tags} />
+        <ArticleBody
+          content={selectedArticle.content}
+          tags={selectedArticle.tags}
+        />
       </div>
       <div className="mt-12 border-t-2 border-mark pt-8">
         <h3 className="type-subhead mb-6">نمرهٔ شما</h3>

@@ -21,11 +21,11 @@ export default function ErrorBoundary({
       <StateMessage
         tone="error"
         title="خطایی رخ داد."
-        description="صفحه بارگذاری نشد. دوباره تلاش کنید یا به فهرست مقاله‌ها برگردید."
+        description="صفحه بارگذاری نشد. دوباره تلاش کنید یا به فهرست نوشته‌ها برگردید."
       >
         <Button onClick={reset}>تلاش دوباره</Button>
         <Button asChild variant="outline">
-          <Link href="/dashboard">مقاله‌ها</Link>
+          <Link href="/dashboard">نوشته‌ها</Link>
         </Button>
       </StateMessage>
     </div>

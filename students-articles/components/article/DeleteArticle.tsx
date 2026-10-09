@@ -17,7 +17,7 @@ export function DeleteArticle({ id, action, pending }: DeleteArticleProps) {
   if (!confirming) {
     return (
       <Button variant="outline" size="sm" onClick={() => setConfirming(true)}>
-        حذف مقاله
+        حذف نوشته
       </Button>
     );
   }
@@ -26,12 +26,18 @@ export function DeleteArticle({ id, action, pending }: DeleteArticleProps) {
     <form action={action} className="flex flex-wrap items-center gap-3">
       <input type="hidden" name="id" value={id} />
       <span role="alert" className="type-meta">
-        مقاله برای همیشه حذف شود؟
+        نوشته برای همیشه حذف شود؟
       </span>
       <Button type="submit" variant="destructive" size="sm" disabled={pending}>
         {pending ? <Spinner /> : "بله، حذف شود"}
       </Button>
-      <Button type="button" variant="outline" size="sm" onClick={() => setConfirming(false)} disabled={pending}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => setConfirming(false)}
+        disabled={pending}
+      >
         انصراف
       </Button>
     </form>

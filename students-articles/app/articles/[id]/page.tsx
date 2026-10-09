@@ -7,7 +7,7 @@ import ArticleInteractiveView from "@/components/article/ArticleInteractiveView"
 import { Button } from "@/components/ui/button";
 import { StateMessage } from "@/components/states/StateMessage";
 
-export const metadata: Metadata = { title: "مقاله" };
+export const metadata: Metadata = { title: "نوشته" };
 
 export default async function ArticleDetailPage({
   params,
@@ -16,7 +16,10 @@ export default async function ArticleDetailPage({
 }) {
   const { id } = await params;
 
-  const [articleResult, user] = await Promise.all([getArticleById(id), getCurrentUser()]);
+  const [articleResult, user] = await Promise.all([
+    getArticleById(id),
+    getCurrentUser(),
+  ]);
 
   // Student work is private: logged-out visitors go to the login page.
   if (!user) {
@@ -24,15 +27,19 @@ export default async function ArticleDetailPage({
   }
 
   if (!articleResult.success || !articleResult.article) {
-    if (articleResult.error === "مقاله یافت نشد") {
+    if (articleResult.error === "نوشته یافت نشد") {
       notFound();
     }
 
     return (
       <div className="page py-16">
-        <StateMessage tone="error" title="مقاله باز نشد." description={articleResult.error}>
+        <StateMessage
+          tone="error"
+          title="نوشته باز نشد."
+          description={articleResult.error}
+        >
           <Button asChild>
-            <Link href="/dashboard">بازگشت به مقاله‌ها</Link>
+            <Link href="/dashboard">بازگشت به نوشته‌ها</Link>
           </Button>
         </StateMessage>
       </div>

@@ -18,13 +18,13 @@ type ActionState = {
 
 export async function createArticle(
   prevState: ActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionState> {
   try {
     const user = await requireUser();
 
     if (user.role !== "student") {
-      throw new Error("فقط دانشجویان می‌توانند مقاله ایجاد کنند");
+      throw new Error("فقط دانشجویان می‌توانند نوشته ایجاد کنند");
     }
 
     const rawData = {
@@ -66,8 +66,8 @@ export async function getArticles(prevState: any, formData: FormData) {
 
     const skip = (page - 1) * limit;
 
-    // Students only ever see (and paginate over) their own articles.
-    const filter = user.role === "student" ? { author: user._id } : {};
+    // All users see all articles; only professors may grade them.
+    const filter = {};
 
     const articles = await Article.find(filter)
       .populate("author", "fullName university field")
@@ -103,7 +103,7 @@ export async function getArticleById(id: string) {
   try {
     // Validate ObjectId format
     if (!id || typeof id !== "string" || !/^[0-9a-fA-F]{24}$/.test(id)) {
-      throw new Error("مقاله یافت نشد");
+      throw new Error("نوشته یافت نشد");
     }
 
     await connectDB();
@@ -113,7 +113,7 @@ export async function getArticleById(id: string) {
       .populate("grades.professor", "fullName");
 
     if (!article) {
-      throw new Error("مقاله یافت نشد");
+      throw new Error("نوشته یافت نشد");
     }
 
     return { success: true, article: JSON.parse(JSON.stringify(article)) };
@@ -126,7 +126,7 @@ export async function updateArticle(id: string, formData: FormData) {
   try {
     // Validate ObjectId format
     if (!id || typeof id !== "string" || !/^[0-9a-fA-F]{24}$/.test(id)) {
-      throw new Error("مقاله یافت نشد");
+      throw new Error("نوشته یافت نشد");
     }
 
     const user = await requireUser();
@@ -135,7 +135,7 @@ export async function updateArticle(id: string, formData: FormData) {
 
     const article = await Article.findById(id);
     if (!article) {
-      throw new Error("مقاله یافت نشد");
+      throw new Error("نوشته یافت نشد");
     }
 
     if (article.author.toString() !== user._id.toString()) {
@@ -159,7 +159,6 @@ export async function updateArticle(id: string, formData: FormData) {
     Object.assign(article, validatedData);
     await article.save();
 
-    // Population برای بازگرداندن دیتای کامل به کلاینت بعد از آپدیت
     await article.populate("author", "fullName university field");
     await article.populate("grades.professor", "fullName");
 
@@ -173,7 +172,7 @@ export async function deleteArticle(id: string) {
   try {
     // Validate ObjectId format
     if (!id || typeof id !== "string" || !/^[0-9a-fA-F]{24}$/.test(id)) {
-      throw new Error("مقاله یافت نشد");
+      throw new Error("نوشته یافت نشد");
     }
 
     const user = await requireUser();
@@ -182,7 +181,7 @@ export async function deleteArticle(id: string) {
 
     const article = await Article.findById(id);
     if (!article) {
-      throw new Error("مقاله یافت نشد");
+      throw new Error("نوشته یافت نشد");
     }
 
     if (article.author.toString() !== user._id.toString()) {

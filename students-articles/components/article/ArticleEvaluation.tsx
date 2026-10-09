@@ -25,12 +25,17 @@ export function ArticleEvaluation({ article, action }: ArticleEvaluationProps) {
       </h2>
 
       <div className="mt-6">
-        <ScoreMark score={graded ? averageScore : null} size="xl" showLabel underline="view" />
+        <ScoreMark
+          score={graded ? averageScore : null}
+          size="xl"
+          showLabel
+          underline="view"
+        />
       </div>
       <p className="type-meta mt-4 text-muted-foreground">
         {graded
           ? `میانگین ${faNum(grades.length)} بازخورد`
-          : "هنوز استادی به این مقاله نمره نداده است."}
+          : "هنوز استادی به این نوشته نمره نداده است."}
       </p>
 
       {graded ? (
@@ -44,13 +49,17 @@ export function ArticleEvaluation({ article, action }: ArticleEvaluationProps) {
                 >
                   {faNum(i + 1)}
                 </span>
-                <span className="type-meta font-medium">{grade.professor.fullName}</span>
+                <span className="type-meta font-medium">
+                  {grade.professor.fullName}
+                </span>
               </div>
               <div className="mt-3">
                 <ScoreMark score={grade.score} size="md" />
               </div>
               {grade.comment ? (
-                <p className="type-body mt-3 whitespace-pre-line">{grade.comment}</p>
+                <p className="type-body mt-3 whitespace-pre-line">
+                  {grade.comment}
+                </p>
               ) : null}
               <p className="type-label mt-3">{formatDate(grade.gradedAt)}</p>
             </li>

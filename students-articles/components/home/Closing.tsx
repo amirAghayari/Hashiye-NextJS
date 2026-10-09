@@ -5,7 +5,10 @@ import { MarginNote } from "@/components/editorial/MarginNote";
 
 export function Closing() {
   return (
-    <section aria-labelledby="closing-title" className="border-t border-foreground">
+    <section
+      aria-labelledby="closing-title"
+      className="border-t border-foreground"
+    >
       <div className="page">
         <Spread
           mainClassName="py-16 md:py-24"
@@ -13,7 +16,7 @@ export function Closing() {
           main={
             <>
               <h2 id="closing-title" className="type-headline max-w-3xl">
-                اولین مقاله‌تان را همین امروز آغاز کنید.
+                وقتشه ایده‌هات رو با دیگران به اشتراک بذاری.{" "}
               </h2>
               <div className="mt-10 flex flex-wrap items-center gap-6">
                 <Button asChild size="lg">
@@ -28,7 +31,11 @@ export function Closing() {
               </div>
             </>
           }
-          margin={<MarginNote n={3}>ثبت‌نام تنها با ایمیل، رمز عبور و انتخاب نقش انجام می‌شود.</MarginNote>}
+          margin={
+            <MarginNote n={3}>
+              ثبت‌نام تنها با ایمیل، رمز عبور و انتخاب نقش انجام می‌شود.
+            </MarginNote>
+          }
         />
       </div>
     </section>

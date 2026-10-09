@@ -17,7 +17,12 @@ type ArticleEditorProps = {
 };
 
 /** One form for every editable field (the title, category, tags and text all submit together). */
-export function ArticleEditor({ article, action, pending, onCancel }: ArticleEditorProps) {
+export function ArticleEditor({
+  article,
+  action,
+  pending,
+  onCancel,
+}: ArticleEditorProps) {
   return (
     <div className="page py-10 md:py-16">
       <form action={action} className="grid max-w-3xl gap-10">
@@ -33,7 +38,12 @@ export function ArticleEditor({ article, action, pending, onCancel }: ArticleEdi
           />
         </Field>
         <Field label="دسته‌بندی" htmlFor="edit-category">
-          <NativeSelect id="edit-category" name="category" defaultValue={article.category} required>
+          <NativeSelect
+            id="edit-category"
+            name="category"
+            defaultValue={article.category}
+            required
+          >
             {CATEGORIES.map((category) => (
               <option key={category} value={category}>
                 {category}
@@ -41,10 +51,14 @@ export function ArticleEditor({ article, action, pending, onCancel }: ArticleEdi
             ))}
           </NativeSelect>
         </Field>
-        <Field label="برچسب‌ها" htmlFor="tags-draft" hint="حداکثر ۱۰ برچسب، هر برچسب تا ۵۰ نویسه">
+        <Field
+          label="برچسب‌ها"
+          htmlFor="tags-draft"
+          hint="حداکثر ۱۰ برچسب، هر برچسب تا ۵۰ نویسه"
+        >
           <TagInput name="tags" defaultTags={article.tags} />
         </Field>
-        <Field label="متن مقاله" htmlFor="edit-content">
+        <Field label="متن نوشته" htmlFor="edit-content">
           <Textarea
             id="edit-content"
             name="content"
@@ -59,7 +73,13 @@ export function ArticleEditor({ article, action, pending, onCancel }: ArticleEdi
           <Button type="submit" size="lg" disabled={pending}>
             {pending ? "در حال ذخیره…" : "ذخیرهٔ تغییرات"}
           </Button>
-          <Button type="button" variant="outline" size="lg" onClick={onCancel} disabled={pending}>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={onCancel}
+            disabled={pending}
+          >
             انصراف
           </Button>
         </div>

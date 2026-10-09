@@ -21,7 +21,11 @@ import { cn } from "@/lib/utils";
 
 function Brand() {
   return (
-    <Link href="/" className="flex items-center gap-2" aria-label="حاشیه، صفحهٔ اصلی">
+    <Link
+      href="/"
+      className="flex items-center gap-2"
+      aria-label="حاشیه، صفحهٔ اصلی"
+    >
       <span className="text-xl font-extrabold">حاشیه</span>
       <span aria-hidden className="size-2 rounded-full bg-mark" />
     </Link>
@@ -39,9 +43,10 @@ export default function Navbar() {
 
   const links = user
     ? [
-        { href: "/dashboard", label: "مقالات" },
+        { href: "/articles", label: "نوشته‌ها" },
+        { href: "/articles/my", label: "نوشته‌های من" },
         user.role === "student"
-          ? { href: "/articles/create", label: "نوشتن مقاله" }
+          ? { href: "/articles/create", label: "نوشتن نوشته" }
           : { href: "/grades", label: "نمره‌دهی" },
       ]
     : [];
@@ -55,7 +60,12 @@ export default function Navbar() {
   };
 
   const logoutButton = (
-    <Button onClick={handleLogout} variant="outline" size="sm" disabled={isLoggingOut}>
+    <Button
+      onClick={handleLogout}
+      variant="outline"
+      size="sm"
+      disabled={isLoggingOut}
+    >
       {isLoggingOut ? <Spinner /> : "خروج"}
     </Button>
   );
@@ -65,9 +75,13 @@ export default function Navbar() {
       <div className="page flex h-16 items-center gap-6">
         <Brand />
 
-        <nav aria-label="اصلی" className="hidden flex-1 items-center gap-8 ms-6 md:flex">
+        <nav
+          aria-label="اصلی"
+          className="hidden flex-1 items-center gap-8 ms-6 md:flex"
+        >
           {links.map((link) => {
-            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+            const active =
+              pathname === link.href || pathname.startsWith(`${link.href}/`);
             return (
               <Link
                 key={link.href}
@@ -75,7 +89,7 @@ export default function Navbar() {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "border-b-2 border-transparent py-1 type-meta transition-colors hover:border-foreground/40",
-                  active && "border-foreground font-bold"
+                  active && "border-foreground font-bold",
                 )}
               >
                 {link.label}
@@ -119,7 +133,9 @@ export default function Navbar() {
                 <Brand />
               </div>
               <SheetTitle className="sr-only">منو</SheetTitle>
-              <SheetDescription className="sr-only">پیمایش در سایت</SheetDescription>
+              <SheetDescription className="sr-only">
+                پیمایش در سایت
+              </SheetDescription>
 
               <nav aria-label="منوی موبایل" className="flex-1 px-4">
                 {(links.length

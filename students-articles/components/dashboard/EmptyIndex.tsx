@@ -23,11 +23,11 @@ export function EmptyIndex(props: EmptyIndexProps) {
   if (props.role === "student") {
     return (
       <StateMessage
-        title="هنوز مقاله‌ای نگارش نکرده‌اید."
-        description="اولین مقاله‌تان را ثبت کنید تا استادان بتوانند نمره دهند و در حاشیه بازخورد بنویسند."
+        title="هنوز نوشته‌ای نگارش نکرده‌اید."
+        description="اولین نوشته‌تان را ثبت کنید تا استادان بتوانند نمره دهند و در حاشیه بازخورد بنویسند."
       >
         <Button asChild size="lg">
-          <Link href="/articles/create">نوشتن مقاله</Link>
+          <Link href="/articles/create">نوشتن نوشته</Link>
         </Button>
       </StateMessage>
     );
@@ -35,8 +35,8 @@ export function EmptyIndex(props: EmptyIndexProps) {
 
   return (
     <StateMessage
-      title="هنوز مقاله‌ای ثبت نشده است."
-      description="وقتی دانشجویان مقاله منتشر کنند، اینجا در فهرست ظاهر می‌شوند."
+      title="هنوز نوشته‌ای ثبت نشده است."
+      description="وقتی دانشجویان نوشته منتشر کنند، اینجا در فهرست ظاهر می‌شوند."
     />
   );
 }

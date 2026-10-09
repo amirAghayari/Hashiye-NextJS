@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const GradeSchema = {
   create: z.object({
-    articleId: z.string().min(1, "شناسه مقاله الزامی است"),
+    articleId: z.string().min(1, "شناسه نوشته الزامی است"),
     score: z
       .number()
       .min(0, "نمره نمی‌تواند کمتر از ۰ باشد")

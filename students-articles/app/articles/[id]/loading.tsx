@@ -1,7 +1,11 @@
 export default function ArticleLoading() {
   return (
-    <div role="status" aria-label="در حال بارگذاری مقاله" className="page pt-16">
-      <span className="sr-only">در حال بارگذاری مقاله…</span>
+    <div
+      role="status"
+      aria-label="در حال بارگذاری نوشته"
+      className="page pt-16"
+    >
+      <span className="sr-only">در حال بارگذاری نوشته…</span>
       <div aria-hidden>
         <div className="skeleton h-6 w-24" />
         <div className="skeleton mt-6 h-16 w-full max-w-3xl" />

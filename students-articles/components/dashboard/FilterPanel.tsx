@@ -31,7 +31,11 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const items = [
     { value: ALL, label: "همه", count: total },
-    ...Object.entries(counts).map(([value, count]) => ({ value, label: value, count })),
+    ...Object.entries(counts).map(([value, count]) => ({
+      value,
+      label: value,
+      count,
+    })),
   ];
 
   return (
@@ -47,7 +51,9 @@ export function FilterPanel({
           autoComplete="off"
         />
         {paged ? (
-          <p className="type-label mt-2">جست‌وجو تنها در مقاله‌های صفحهٔ جاری انجام می‌شود.</p>
+          <p className="type-label mt-2">
+            جست‌وجو تنها در نوشته‌های صفحهٔ جاری انجام می‌شود.
+          </p>
         ) : null}
       </div>
 
@@ -66,11 +72,13 @@ export function FilterPanel({
                     "flex min-h-11 w-full items-center justify-between gap-3 border border-input px-3 type-meta transition-colors lg:border-0 lg:border-b lg:px-0",
                     active
                       ? "bg-foreground text-background lg:border-foreground lg:bg-transparent lg:font-bold lg:text-foreground"
-                      : "hover:bg-muted"
+                      : "hover:bg-muted",
                   )}
                 >
                   <span>{item.label}</span>
-                  <span className="type-label text-inherit opacity-70">{faNum(item.count)}</span>
+                  <span className="type-label text-inherit opacity-70">
+                    {faNum(item.count)}
+                  </span>
                 </button>
               </li>
             );

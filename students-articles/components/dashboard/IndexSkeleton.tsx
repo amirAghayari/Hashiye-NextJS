@@ -1,8 +1,8 @@
 /** Loading placeholder shaped like the real index: one lead, then rows. */
 export function IndexSkeleton() {
   return (
-    <div role="status" aria-label="در حال بارگذاری مقاله‌ها">
-      <span className="sr-only">در حال بارگذاری مقاله‌ها…</span>
+    <div role="status" aria-label="در حال بارگذاری نوشته‌ها">
+      <span className="sr-only">در حال بارگذاری نوشته‌ها…</span>
       <div aria-hidden className="border-b border-foreground pb-10 md:pb-14">
         <div className="skeleton h-5 w-40" />
         <div className="skeleton mt-6 h-14 w-full max-w-xl" />

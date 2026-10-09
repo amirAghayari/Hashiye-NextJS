@@ -22,7 +22,7 @@ const naskh = Noto_Naskh_Arabic({
 export const metadata: Metadata = {
   title: { default: "حاشیه", template: "%s | حاشیه" },
   description:
-    "نشریهٔ مقالات دانشجویی: دانشجو مقاله می‌نویسد، استاد نمره می‌دهد و در حاشیه توضیح می‌نویسد.",
+    "نشریهٔ مقالات دانشجویی: دانشجو نوشته می‌نویسد، استاد نمره می‌دهد و در حاشیه توضیح می‌نویسد.",
 };
 
 export default function RootLayout({
