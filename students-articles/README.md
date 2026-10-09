@@ -102,3 +102,13 @@ students-articles/
 - علوم انسانی
 - هنر
 - سایر
+
+## Design system
+
+The visual language is "Journal + Marginalia": paper and ink, with one vermilion that is reserved for grades, scores and annotations.
+
+- **Tokens** live in `app/globals.css` (`:root` / `.dark`, mapped into Tailwind via `@theme`). Never hard-code colors; vermilion is `mark`.
+- **Type roles** are the `.type-*` classes (display, headline, title, subhead, deck, body, meta, label, numeral). Serif (Noto Naskh Arabic) is for titles and score numerals, Vazirmatn for everything else. Both are loaded in `app/layout.tsx`; to try another serif, change the font there and the `--font-serif` token.
+- **Layout**: `.page` is the one container. `components/editorial/Spread` is the main column plus the vermilion margin line, used by the home, index, create and article pages.
+- **Scores** are drawn only with `ScoreMark` (numeral size and a red underline, no traffic-light colors).
+- **Motion**: CSS for entrances (`.rise`, `.pen-intro`, `app/template.tsx`), GSAP only for the reading progress bar and the scroll-triggered pen stroke. Everything is gated on `prefers-reduced-motion`.

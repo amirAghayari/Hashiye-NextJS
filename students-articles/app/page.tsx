@@ -1,30 +1,18 @@
-import CTASection from "@/components/CTASection";
-import HeroSection from "@/components/HeroSection.client";
-import { cookies } from "next/headers";
-import dynamic from "next/dynamic";
-import CTASectionClient from "@/components/CTASection.client";
-import HeroSectionClient from "@/components/HeroSection.client";
+import { Masthead } from "@/components/home/Masthead";
+import { Hero } from "@/components/home/Hero";
+import { Roles } from "@/components/home/Roles";
+import { ArticlePath } from "@/components/home/ArticlePath";
+import { Closing } from "@/components/home/Closing";
 
-const FeaturesSection = dynamic(
-  () => import("@/components/FeatureSection"),
-  {}
-);
-const ProcessSection = dynamic(
-  () => import("@/components/ProcessSection.client")
-);
-
-const Home = async () => {
-  const cookieStore = await cookies();
-  const user = cookieStore.get("user");
-
+// Public and static: no article data lives here, by design.
+export default function Home() {
   return (
-    <div className="min-h-screen">
-      <HeroSectionClient />
-      <FeaturesSection />
-      <ProcessSection />
-      <CTASectionClient />
-    </div>
+    <>
+      <Masthead />
+      <Hero />
+      <Roles />
+      <ArticlePath />
+      <Closing />
+    </>
   );
-};
-
-export default Home;
+}

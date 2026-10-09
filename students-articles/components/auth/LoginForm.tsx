@@ -1,11 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useActionState, useEffect } from "react";
-import { login } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import { login } from "@/actions/auth";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Notice } from "@/components/editorial/Notice";
+import { setStoredUser } from "@/hooks/useStoredUser";
 
 interface LoginState {
   success: boolean;
@@ -13,14 +15,10 @@ interface LoginState {
   user?: any;
 }
 
+const initialState: LoginState = { success: false, error: "", user: undefined };
+
 export default function LoginForm() {
   const router = useRouter();
-  const initialState: LoginState = {
-    success: false,
-    error: "",
-    user: undefined,
-  };
-
   const [state, formAction, isPending] = useActionState<LoginState, FormData>(
     login,
     initialState
@@ -35,45 +33,24 @@ export default function LoginForm() {
         university: state.user.university,
         field: state.user.field,
       };
-      localStorage.setItem("user", JSON.stringify(userData));
-      console.log("User data stored in localStorage:", userData);
+      setStoredUser(userData);
       router.push("/dashboard");
     }
   }, [state.success, state.user, router]);
 
   return (
-    <form action={formAction} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="email">ایمیل</Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="example@email.com"
-          required
-          className="text-right"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">رمز عبور</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="رمز عبور خود را وارد کنید"
-          required
-          className="text-right"
-        />
-      </div>
+    <form action={formAction} className="grid gap-6">
+      <Field label="ایمیل" htmlFor="email">
+        <Input id="email" name="email" type="email" dir="ltr" placeholder="example@email.com" autoComplete="email" required className="text-end" />
+      </Field>
+      <Field label="رمز عبور" htmlFor="password">
+        <Input id="password" name="password" type="password" dir="ltr" autoComplete="current-password" required className="text-end" />
+      </Field>
 
-      {state.error && (
-        <div className="text-red-600 text-sm text-center bg-red-50 p-2 rounded">
-          {state.error}
-        </div>
-      )}
+      {state.error ? <Notice tone="error">{state.error}</Notice> : null}
 
-      <Button type="submit" disabled={isPending} className="flex-1 w-full">
-        {isPending ? "در حال ورود..." : "ورود"}
+      <Button type="submit" size="lg" disabled={isPending}>
+        {isPending ? "در حال ورود…" : "ورود"}
       </Button>
     </form>
   );

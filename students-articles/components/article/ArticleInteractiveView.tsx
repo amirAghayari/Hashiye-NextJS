@@ -1,47 +1,43 @@
 "use client";
 
-// TODO : کامپوننت بندی کن
-
-import { useState, useActionState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useActionState, useRef, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Notice } from "@/components/editorial/Notice";
+import { Spread } from "@/components/editorial/Spread";
+import { GradeFields } from "@/components/grading/GradeFields";
+import { ArticleBody } from "@/components/article/ArticleBody";
+import { ArticleEditor } from "@/components/article/ArticleEditor";
+import { ArticleEvaluation } from "@/components/article/ArticleEvaluation";
+import { ArticleHeader } from "@/components/article/ArticleHeader";
+import { DeleteArticle } from "@/components/article/DeleteArticle";
+import { ReadingProgress } from "@/components/article/ReadingProgress";
 import {
   updateArticleAction,
   deleteArticleAction,
   gradeArticleAction,
 } from "@/actions/article-wrapper";
-import { ArticleViewProps } from "@/types/article";
-import { formatDate } from "@/lib/formatDate";
-import { getScoreColor } from "@/lib/getScoreColor";
-import { getScoreLabel } from "@/lib/getScoreLabel";
+import type { ArticleViewProps } from "@/types/article";
 
 export default function ArticleInteractiveView({
   initialArticle,
   isOwner,
   isProfessor,
 }: ArticleViewProps) {
-  const initialState = {
-    message: "",
-    success: false,
-  };
+  const initialState = { message: "", success: false };
 
   const [article, setArticle] = useState(initialArticle);
   const [isEditing, setIsEditing] = useState(false);
   const [isGrading, setIsGrading] = useState(false);
+  const bodyRef = useRef<HTMLElement>(null);
 
   const [deleteState, deleteAction, isDeleting] = useActionState(
     deleteArticleAction,
     initialState
   );
 
-  // TODO : فهم این قسمت
+  // The wrapper actions only know the id from the form, so it is appended here.
   const [updateState, updateAction, isUpdating] = useActionState(
     async (prevState: any, formData: FormData) => {
       formData.append("id", article._id);
@@ -68,305 +64,84 @@ export default function ArticleInteractiveView({
     initialState
   );
 
+  const message = updateState?.message || deleteState?.message || gradeState?.message;
+  const messageIsSuccess = Boolean(updateState?.success || gradeState?.success);
+
+  // Check if professor has already graded this article
+  const hasGraded = article.grades.some(
+    (grade) => String(grade.professor._id) === String(initialArticle.author?._id)
+  );
+
+  const gradingAction = isProfessor && !hasGraded ? (
+    isGrading ? (
+      <form action={gradeAction} className="mt-10 border-t pt-8">
+        <h3 className="type-subhead mb-6">نمرهٔ شما</h3>
+        <GradeFields
+          pending={isSubmittingGrade}
+          onCancel={() => setIsGrading(false)}
+          idPrefix="article-grade"
+          autoFocus
+        />
+      </form>
+    ) : (
+      <Button variant="mark" className="mt-10" onClick={() => setIsGrading(true)}>
+        نمره‌دهی به این مقاله
+      </Button>
+    )
+  ) : null;
+
   return (
     <>
-      {(updateState?.message ||
-        deleteState?.message ||
-        gradeState?.message) && (
-        <div
-          className={`px-4 py-3 rounded mb-6 ${
-            updateState?.success || gradeState?.success
-              ? "bg-green-50 text-green-700"
-              : "bg-red-50 text-red-700"
-          }`}
+      <div className="page flex flex-wrap items-center justify-between gap-4 pt-6">
+        <Link
+          href="/dashboard"
+          className="inline-flex min-h-11 items-center gap-2 type-meta underline-offset-8 hover:underline"
         >
-          {updateState?.message || deleteState?.message || gradeState?.message}
+          <ArrowRight className="size-4" aria-hidden />
+          بازگشت به مقاله‌ها
+        </Link>
+        {isOwner && !isEditing ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+              ویرایش
+            </Button>
+            <DeleteArticle id={article._id} action={deleteAction} pending={isDeleting} />
+          </div>
+        ) : null}
+      </div>
+
+      {message ? (
+        <div className="page sticky top-4 z-40 pt-4">
+          <Notice tone={messageIsSuccess ? "success" : "error"}>{message}</Notice>
         </div>
+      ) : null}
+
+      {isEditing ? (
+        <ArticleEditor
+          article={article}
+          action={updateAction}
+          pending={isUpdating}
+          onCancel={() => setIsEditing(false)}
+        />
+      ) : (
+        <>
+          <ReadingProgress targetRef={bodyRef} />
+          <ArticleHeader article={article} />
+          <div className="page">
+            <Spread
+              marginWidth="lg"
+              mainClassName="py-12 md:py-16"
+              marginClassName="py-12 md:py-16"
+              main={
+                <article ref={bodyRef}>
+                  <ArticleBody content={article.content} tags={article.tags} />
+                </article>
+              }
+              margin={<ArticleEvaluation article={article} action={gradingAction} />}
+            />
+          </div>
+        </>
       )}
-
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-            <div className="w-full md:flex-1">
-              {isEditing ? (
-                <form
-                  id="edit-form"
-                  action={updateAction}
-                  className="space-y-4"
-                >
-                  <input
-                    name="title"
-                    defaultValue={article.title}
-                    className="text-2xl font-bold w-full border rounded px-3 py-2"
-                    placeholder="عنوان مقاله"
-                    required
-                  />
-                  <input
-                    type="hidden"
-                    name="tags"
-                    value={article.tags.join(", ")}
-                  />
-                </form>
-              ) : (
-                <CardTitle className="text-xl sm:text-2xl">
-                  {article.title}
-                </CardTitle>
-              )}
-
-              <CardDescription className="mt-2">
-                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
-                  <span>نویسنده: {article.author.fullName}</span>
-                  <span>{formatDate(article.createdAt)}</span>
-                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    {article.category}
-                  </span>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">
-                  {article.author.university} - {article.author.field}
-                </div>
-              </CardDescription>
-            </div>
-
-            <div className="flex gap-2">
-              {isOwner && !isEditing && (
-                <>
-                  <Button
-                    onClick={() => setIsEditing(true)}
-                    variant="outline"
-                    className="flex-1 md:flex-none"
-                  >
-                    ویرایش
-                  </Button>
-                  <form action={deleteAction}>
-                    <input type="hidden" name="id" value={article._id} />
-                    <Button
-                      variant="destructive"
-                      type="submit"
-                      disabled={isDeleting}
-                      className="flex-1 md:flex-none"
-                    >
-                      {isDeleting ? "..." : "حذف"}
-                    </Button>
-                  </form>
-                </>
-              )}
-              {isOwner && isEditing && (
-                <>
-                  <Button
-                    type="submit"
-                    form="edit-form"
-                    disabled={isUpdating}
-                    className="flex-1 md:flex-none"
-                  >
-                    {isUpdating ? "در حال ذخیره..." : "ذخیره"}
-                  </Button>
-                  <Button
-                    onClick={() => setIsEditing(false)}
-                    variant="outline"
-                    className="flex-1 md:flex-none"
-                  >
-                    انصراف
-                  </Button>
-                </>
-              )}
-              {isProfessor && !isGrading && (
-                <Button
-                  onClick={() => setIsGrading(true)}
-                  className="w-full md:w-auto"
-                >
-                  نمره‌دهی
-                </Button>
-              )}
-            </div>
-          </div>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          {isEditing ? (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  دسته‌بندی
-                </label>
-                <select
-                  name="category"
-                  defaultValue={article.category}
-                  form="edit-form"
-                  className="w-full border rounded px-3 py-2"
-                >
-                  <option value="کامپیوتر">کامپیوتر</option>
-                  <option value="مهندسی">مهندسی</option>
-                  <option value="علوم پایه">علوم پایه</option>
-                  <option value="پزشکی">پزشکی</option>
-                  <option value="علوم انسانی">علوم انسانی</option>
-                  <option value="هنر">هنر</option>
-                  <option value="سایر">سایر</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  برچسب‌ها (جدا شده با کاما)
-                </label>
-                <input
-                  type="text"
-                  name="tags"
-                  defaultValue={article.tags.join(", ")}
-                  form="edit-form"
-                  className="w-full border rounded px-3 py-2"
-                  placeholder="مثال: وب، برنامه‌نویسی، جاوااسکریپت"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  برچسب‌ها را با کاما از هم جدا کنید
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">محتوا</label>
-                <textarea
-                  name="content"
-                  defaultValue={article.content}
-                  form="edit-form"
-                  className="w-full border rounded px-3 py-2 h-64"
-                  required
-                />
-              </div>
-            </div>
-          ) : (
-            <div>
-              <h3 className="text-lg font-semibold mb-3">محتوای مقاله</h3>
-              <div className="whitespace-pre-wrap text-foreground leading-relaxed text-sm sm:text-base">
-                {article.content}
-              </div>
-            </div>
-          )}
-
-          {!isEditing && article.tags.length > 0 && (
-            <div>
-              <h3 className="text-lg font-semibold mb-3">برچسب‌ها</h3>
-              <div className="flex flex-wrap gap-1 sm:gap-2">
-                {article.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* --- Grades Section --- */}
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold mb-4">نمرات و نظرات اساتید</h3>
-            <div className="text-center mb-6">
-              <div
-                className={`text-5xl font-bold ${getScoreColor(
-                  article.averageScore
-                )}`}
-              >
-                {article.averageScore.toFixed(1)}
-              </div>
-              <div
-                className={`text-lg font-medium mt-2 ${getScoreColor(
-                  article.averageScore
-                )}`}
-              >
-                {getScoreLabel(article.averageScore)}
-              </div>
-              <div className="text-gray-500 text-sm mt-1">
-                میانگین از {article.grades.length} نمره
-              </div>
-            </div>
-
-            <div className="space-y-4 mb-6">
-              {article.grades.map((grade) => (
-                <Card key={grade._id}>
-                  <CardContent className="pt-4">
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-                      <div>
-                        <div className="font-medium">
-                          {grade.professor.fullName}
-                        </div>
-                        <div
-                          className={`text-xl sm:text-2xl font-bold ${getScoreColor(
-                            grade.score
-                          )}`}
-                        >
-                          نمره: {grade.score}
-                        </div>
-                        {grade.comment && (
-                          <div className="mt-2 text-gray-700">
-                            <span className="font-medium text-sm">
-                              توضیحات:
-                            </span>
-                            {grade.comment}
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-                        {formatDate(grade.gradedAt)}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {isProfessor && isGrading && (
-              <Card className="border-blue-200 bg-background">
-                <CardHeader>
-                  <CardTitle className="text-lg">نمره‌دهی جدید</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form action={gradeAction} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        نمره (۰ تا ۲۰)
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        step="0.5"
-                        name="score"
-                        className="w-full border rounded px-3 py-2"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        توضیحات
-                      </label>
-                      <textarea
-                        name="comment"
-                        className="w-full border rounded px-3 py-2 h-24"
-                        placeholder="نظر خود را بنویسید..."
-                      />
-                    </div>
-                    <div className="flex flex-wrap gap-2 w-full md:w-auto mt-4 md:mt-0">
-                      <Button
-                        type="submit"
-                        disabled={isSubmittingGrade}
-                        className="w-full sm:w-auto"
-                      >
-                        {isSubmittingGrade ? "در حال ثبت..." : "ثبت نمره"}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="w-full sm:w-auto"
-                        onClick={() => setIsGrading(false)}
-                      >
-                        انصراف
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </CardContent>
-      </Card>
     </>
   );
 }

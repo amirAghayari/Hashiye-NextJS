@@ -1,25 +1,46 @@
 "use client";
+
+import { PageHeader } from "@/components/editorial/PageHeader";
+import { Spread } from "@/components/editorial/Spread";
+import { StateMessage } from "@/components/states/StateMessage";
+import { ArticleDetails } from "@/components/grades/ArticleDetails";
+import { ArticlesList } from "@/components/grades/ArticlesList";
 import { GradesProvider } from "@/store/gradeStore";
-import { ArticleDetails } from "./ArticleDetails";
-import { ArticlesList } from "./ArticlesList";
+import type { Article } from "@/types/article";
 
 interface GradesClientWrapperProps {
-  initialArticles: any[];
+  initialArticles: Article[];
+  error?: string;
 }
 
-export function GradesClientWrapper({
-  initialArticles,
-}: GradesClientWrapperProps) {
+export function GradesClientWrapper({ initialArticles, error }: GradesClientWrapperProps) {
   return (
     <GradesProvider>
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold mb-4">نمره‌دهی مقالات</h1>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <ArticlesList initialArticles={initialArticles} />
-            <ArticleDetails />
+      <PageHeader
+        title="نمره‌دهی"
+        deck="مقاله‌ای را از فهرست انتخاب کنید، مطالعه نمایید و نمره‌دهی کنید."
+      />
+      <div className="page">
+        {error ? (
+          <div className="py-10 md:py-16">
+            <StateMessage tone="error" title="مقاله‌ها بارگذاری نشدند." description={error} />
           </div>
-        </div>
+        ) : initialArticles.length === 0 ? (
+          <div className="py-10 md:py-16">
+            <StateMessage
+              title="مقاله‌ای برای نمره‌دهی موجود نیست."
+              description="وقتی دانشجویان مقاله منتشر کنند، اینجا در فهرست ظاهر می‌شوند."
+            />
+          </div>
+        ) : (
+          <Spread
+            className="lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]"
+            mainClassName="py-10 md:py-16"
+            marginClassName="py-10 lg:py-16"
+            main={<ArticlesList articles={initialArticles} />}
+            margin={<ArticleDetails />}
+          />
+        )}
       </div>
     </GradesProvider>
   );

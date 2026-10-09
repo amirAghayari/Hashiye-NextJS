@@ -1,9 +1,13 @@
-import { notFound, redirect } from "next/navigation";
+import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
 import { getArticleById } from "@/actions/articles";
 import { getCurrentUser } from "@/lib/server/getCurrentUser";
 import ArticleInteractiveView from "@/components/article/ArticleInteractiveView";
-import error from "@/app/error";
+import { Button } from "@/components/ui/button";
+import { StateMessage } from "@/components/states/StateMessage";
+
+export const metadata: Metadata = { title: "مقاله" };
 
 export default async function ArticleDetailPage({
   params,
@@ -12,48 +16,38 @@ export default async function ArticleDetailPage({
 }) {
   const { id } = await params;
 
-  const [articleResult, user] = await Promise.all([
-    getArticleById(id),
-    getCurrentUser(),
-  ]);
+  const [articleResult, user] = await Promise.all([getArticleById(id), getCurrentUser()]);
+
+  // Student work is private: logged-out visitors go to the login page.
+  if (!user) {
+    redirect("/auth/login");
+  }
 
   if (!articleResult.success || !articleResult.article) {
-    if (articleResult.error === "Article not found") {
+    if (articleResult.error === "مقاله یافت نشد") {
       notFound();
     }
 
-    return error();
+    return (
+      <div className="page py-16">
+        <StateMessage tone="error" title="مقاله باز نشد." description={articleResult.error}>
+          <Button asChild>
+            <Link href="/dashboard">بازگشت به مقاله‌ها</Link>
+          </Button>
+        </StateMessage>
+      </div>
+    );
   }
 
   const article = articleResult.article;
-
-  const isOwner = user && String(user.id) === String(article.author._id);
-  const isProfessor = user && user.role === "professor";
+  const isOwner = String(user.id) === String(article.author._id);
+  const isProfessor = user.role === "professor";
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <div className="flex items-center gap-3 text-sm text-gray-600 mb-4">
-            <Link href="/dashboard" className="hover:text-blue-600">
-              ← بازگشت
-            </Link>
-            <span>/</span>
-            <Link href="/dashboard" className="hover:text-blue-600">
-              داشبورد
-            </Link>
-            <span>/</span>
-            <span>مقاله</span>
-          </div>
-          <h1 className="text-3xl font-bold text-foreground">جزئیات مقاله</h1>
-        </div>
-
-        <ArticleInteractiveView
-          initialArticle={article}
-          isOwner={isOwner}
-          isProfessor={isProfessor}
-        />
-      </div>
-    </div>
+    <ArticleInteractiveView
+      initialArticle={article}
+      isOwner={isOwner}
+      isProfessor={isProfessor}
+    />
   );
 }

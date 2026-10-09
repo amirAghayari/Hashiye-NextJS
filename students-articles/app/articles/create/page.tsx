@@ -1,26 +1,20 @@
 "use client";
 
-import { useState, useEffect, useActionState } from "react";
+import Link from "next/link";
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { createArticle } from "@/actions/articles";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
+import { MarginNote } from "@/components/editorial/MarginNote";
+import { Notice } from "@/components/editorial/Notice";
+import { PageHeader } from "@/components/editorial/PageHeader";
+import { Spread } from "@/components/editorial/Spread";
+import { TagInput } from "@/components/form/TagInput";
+import { CATEGORIES } from "@/lib/categories";
 
 const initialState = {
   success: false,
@@ -29,30 +23,7 @@ const initialState = {
 
 export default function CreateArticlePage() {
   const router = useRouter();
-
-  const [state, formAction, isPending] = useActionState(
-    createArticle,
-    initialState
-  );
-
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState("");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userData = localStorage.getItem("user");
-      if (!userData) {
-        return;
-      }
-      try {
-        const user = JSON.parse(userData);
-        if (user.role !== "student") {
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }, [router]);
+  const [state, formAction, isPending] = useActionState(createArticle, initialState);
 
   useEffect(() => {
     if (state.success) {
@@ -60,153 +31,79 @@ export default function CreateArticlePage() {
     }
   }, [state.success, router]);
 
-  const addTag = () => {
-    const trimmed = tagInput.trim();
-    if (trimmed && !tags.includes(trimmed) && tags.length < 10) {
-      setTags((prev) => [...prev, trimmed]);
-      setTagInput("");
-    }
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      addTag();
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-base-content mb-2">
-            ایجاد مقاله جدید
-          </h1>
-          <p className="text-gray-600">
-            اطلاعات مقاله خود را در فرم زیر وارد کنید
-          </p>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>فرم ایجاد مقاله</CardTitle>
-            <CardDescription>
-              تمام فیلدهای الزامی را با دقت پر کنید
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form action={formAction} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="title">عنوان مقاله *</Label>
+    <>
+      <PageHeader title="مقالهٔ تازه" deck="عنوان، دسته‌بندی، متن و برچسب‌ها را وارد کنید." />
+      <div className="page">
+        <Spread
+          mainClassName="py-10 md:py-16"
+          marginClassName="py-8 lg:py-16"
+          main={
+            <form action={formAction} className="grid max-w-3xl gap-10">
+              <Field label="عنوان" htmlFor="title">
                 <Input
                   id="title"
                   name="title"
                   type="text"
-                  placeholder="عنوان مقاله خود را وارد کنید"
+                  minLength={5}
+                  maxLength={200}
                   required
-                  className="text-right"
+                  placeholder="عنوان مقاله"
+                  className="h-auto py-3 font-serif text-title font-bold"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Select name="category" required>
-                  <SelectTrigger className="w-[180px]" id="category">
-                    <SelectValue placeholder="دسته بندی" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="کامپیوتر">کامپیوتر</SelectItem>
-                    <SelectItem value="مهندسی">مهندسی</SelectItem>
-                    <SelectItem value="علوم پایه">علوم پایه</SelectItem>
-                    <SelectItem value="پزشکی">پزشکی</SelectItem>
-                    <SelectItem value="علوم انسانی">علوم انسانی</SelectItem>
-                    <SelectItem value="هنر">هنر</SelectItem>
-                    <SelectItem value="سایر">سایر</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="content">محتوای مقاله *</Label>
+              </Field>
+              <Field label="دسته‌بندی" htmlFor="category">
+                <NativeSelect id="category" name="category" required defaultValue="">
+                  <option value="" disabled>
+                    انتخاب کنید
+                  </option>
+                  {CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </Field>
+              <Field label="متن مقاله" htmlFor="content">
                 <Textarea
                   id="content"
                   name="content"
-                  placeholder="محتوای کامل مقاله خود را اینجا بنویسید..."
+                  rows={14}
+                  minLength={100}
+                  maxLength={10000}
                   required
-                  rows={10}
-                  className="text-right"
+                  placeholder="متن کامل مقاله را اینجا بنویسید…"
+                  className="min-h-96 leading-[2.05]"
                 />
-              </div>
+              </Field>
+              <Field label="برچسب‌ها" htmlFor="tags-draft">
+                <TagInput name="tags" />
+              </Field>
 
-              <div className="space-y-2">
-                <Label htmlFor="tags">برچسب‌ها (حداکثر ۱۰ برچسب)</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="tags"
-                    type="text"
-                    placeholder="برچسب را وارد کرده و Enter را بزنید"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    className="text-right"
-                  />
-                  <Button
-                    type="button"
-                    onClick={addTag}
-                    disabled={!tagInput.trim() || tags.length >= 10}
-                  >
-                    افزودن
-                  </Button>
-                </div>
+              {state.error ? <Notice tone="error">{state.error}</Notice> : null}
 
-                {tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1"
-                      >
-                        {tag}
-                        <button
-                          type="button"
-                          onClick={() => removeTag(tag)}
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {state.error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                  {state.error}
-                </div>
-              )}
-
-              <input type="hidden" name="tags" value={tags.join(", ")} />
-
-              <div className="flex gap-4">
-                <Button type="submit" disabled={isPending} className="flex-1">
-                  {isPending ? "در حال ایجاد..." : "ایجاد مقاله"}
+              <div className="flex flex-wrap gap-3">
+                <Button type="submit" size="lg" disabled={isPending}>
+                  {isPending ? "در حال ثبت…" : "ثبت مقاله"}
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.push("/dashboard")}
-                >
-                  انصراف
+                <Button asChild variant="outline" size="lg">
+                  <Link href="/dashboard">انصراف</Link>
                 </Button>
               </div>
             </form>
-          </CardContent>
-        </Card>
+          }
+          margin={
+            <div className="grid gap-6 lg:sticky lg:top-24">
+              <MarginNote n={1}>عنوان باید بین ۵ تا ۲۰۰ نویسه باشد.</MarginNote>
+              <MarginNote n={2}>متن مقاله باید حداقل ۱۰۰ و حداکثر ۱۰٬۰۰۰ نویسه باشد.</MarginNote>
+              <MarginNote n={3}>تا ۱۰ برچسب بنویسید؛ هر برچسب حداکثر ۵۰ نویسه.</MarginNote>
+              <MarginNote n={4}>
+                پس از ثبت، استادان می‌توانند نمره دهند و در حاشیه بازخورد بنویسند.
+              </MarginNote>
+            </div>
+          }
+        />
       </div>
-    </div>
+    </>
   );
 }

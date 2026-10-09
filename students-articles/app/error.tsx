@@ -1,17 +1,33 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { StateMessage } from "@/components/states/StateMessage";
 
-const error = () => {
+export default function ErrorBoundary({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h3 className="text-lg font-semibold">خطایی رخ داده است</h3>
-      <Link href="/dashboard">
-        <Button>بازگشت به داشبورد</Button>
-      </Link>
+    <div className="page py-16">
+      <StateMessage
+        tone="error"
+        title="خطایی رخ داد."
+        description="صفحه بارگذاری نشد. دوباره تلاش کنید یا به فهرست مقاله‌ها برگردید."
+      >
+        <Button onClick={reset}>تلاش دوباره</Button>
+        <Button asChild variant="outline">
+          <Link href="/dashboard">مقاله‌ها</Link>
+        </Button>
+      </StateMessage>
     </div>
   );
-};
-
-export default error;
+}

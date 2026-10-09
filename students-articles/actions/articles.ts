@@ -3,7 +3,7 @@
 import connectDB from "@/lib/server/mongoose";
 import Article from "@/models/Article";
 import { ArticleSchema } from "@/lib/validations/articleValidation";
-import { getCurrentUser } from "@/lib/server/getCurrentUser";
+import { requireUser } from "@/lib/server/getCurrentUser";
 
 type ActionState = {
   success: boolean;
@@ -21,7 +21,7 @@ export async function createArticle(
   formData: FormData
 ): Promise<ActionState> {
   try {
-    const user = await getCurrentUser();
+    const user = await requireUser();
 
     if (user.role !== "student") {
       throw new Error("فقط دانشجویان می‌توانند مقاله ایجاد کنند");
@@ -60,22 +60,23 @@ export async function getArticles(prevState: any, formData: FormData) {
   try {
     const page = parseInt(formData.get("page") as string) || 1;
     const limit = parseInt(formData.get("limit") as string) || 10;
-    const user = await getCurrentUser();
+    const user = await requireUser();
 
     await connectDB();
 
     const skip = (page - 1) * limit;
 
-    const isStudent = user.role === "student";
+    // Students only ever see (and paginate over) their own articles.
+    const filter = user.role === "student" ? { author: user._id } : {};
 
-    const articles = await Article.find(isStudent ? { author: user._id } : {})
+    const articles = await Article.find(filter)
       .populate("author", "fullName university field")
       .populate("grades.professor", "fullName")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await Article.countDocuments();
+    const total = await Article.countDocuments(filter);
 
     return {
       success: true,
@@ -128,7 +129,7 @@ export async function updateArticle(id: string, formData: FormData) {
       throw new Error("مقاله یافت نشد");
     }
 
-    const user = await getCurrentUser();
+    const user = await requireUser();
 
     await connectDB();
 
@@ -175,7 +176,7 @@ export async function deleteArticle(id: string) {
       throw new Error("مقاله یافت نشد");
     }
 
-    const user = await getCurrentUser();
+    const user = await requireUser();
 
     await connectDB();
 
@@ -198,7 +199,7 @@ export async function deleteArticle(id: string) {
 
 export async function getMyArticles() {
   try {
-    const user = await getCurrentUser();
+    const user = await requireUser();
 
     await connectDB();
 

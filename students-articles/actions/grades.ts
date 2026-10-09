@@ -3,7 +3,7 @@
 import connectDB from "@/lib/server/mongoose";
 import { GradeSchema } from "@/lib/validations/gradeValidation";
 import Article from "@/models/Article";
-import { getCurrentUser } from "@/lib/server/getCurrentUser";
+import { requireUser } from "@/lib/server/getCurrentUser";
 
 export type State = {
   success: boolean;
@@ -16,7 +16,7 @@ export async function gradeArticle(
   formData: FormData
 ): Promise<State> {
   try {
-    const user = await getCurrentUser();
+    const user = await requireUser();
     if (user.role !== "professor") {
       return { success: false, error: "فقط اساتید می‌توانند نمره دهند" };
     }
@@ -66,7 +66,7 @@ export async function gradeArticle(
 
 export async function getArticlesForGrading() {
   try {
-    const user = await getCurrentUser();
+    const user = await requireUser();
 
     if (user.role !== "professor") {
       throw new Error(
@@ -88,7 +88,7 @@ export async function getArticlesForGrading() {
 
 export async function removeGrade(articleId: string) {
   try {
-    const user = await getCurrentUser();
+    const user = await requireUser();
 
     await connectDB();
 

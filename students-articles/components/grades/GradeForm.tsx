@@ -1,10 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { gradeArticle } from "./../../actions/grades";
+import { gradeArticle } from "@/actions/grades";
+import { GradeFields } from "@/components/grading/GradeFields";
+import { Notice } from "@/components/editorial/Notice";
 
 interface GradeState {
   success: boolean;
@@ -12,47 +11,20 @@ interface GradeState {
   message?: string;
 }
 
-export function GradeForm({ articleId }: { articleId: string }) {
-  const initialState: GradeState = {
-    success: false,
-    error: undefined,
-    message: undefined,
-  };
+const initialState: GradeState = { success: false, error: undefined, message: undefined };
 
+export function GradeForm({ articleId }: { articleId: string }) {
   const [state, action, pending] = useActionState<GradeState, FormData>(
     gradeArticle,
     initialState
   );
 
   return (
-    <form action={action} className="space-y-4">
+    <form action={action} className="grid gap-6">
       <input type="hidden" name="articleId" value={articleId} />
-
-      <label>نمره (۰ تا ۲۰) :</label>
-      <Input
-        name="score"
-        type="number"
-        placeholder="نمره :"
-        min="0"
-        max="20"
-        step="0.5"
-        required
-        disabled={pending}
-      />
-      <label>توضیحات :</label>
-      <Textarea
-        name="comment"
-        rows={4}
-        disabled={pending}
-        placeholder="توضیحات اختیاری"
-      />
-
-      <Button type="submit" disabled={pending}>
-        {pending ? "در حال ارسال..." : "ثبت نمره"}
-      </Button>
-
-      {state.success && <p className="text-green-600">{state.message}</p>}
-      {state.error && <p className="text-red-600">{state.error}</p>}
+      <GradeFields pending={pending} idPrefix="list-grade" />
+      {state.success && state.message ? <Notice>{state.message}</Notice> : null}
+      {state.error ? <Notice tone="error">{state.error}</Notice> : null}
     </form>
   );
 }

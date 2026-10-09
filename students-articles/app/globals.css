@@ -1,127 +1,249 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-/* @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap'); */
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: 'Vazirmatn', system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-}
-
+/* ==========================================================================
+   myArticles design tokens: paper & ink, one vermilion.
+   Vermilion (--mark) is reserved for grades, scores and annotations.
+   Spacing follows an 8px rhythm: use even Tailwind steps (2, 4, 6, 8, 12, 16...).
+   ========================================================================== */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.13 0.028 261.692);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.13 0.028 261.692);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.13 0.028 261.692);
-  --primary: oklch(0.21 0.034 264.665);
-  --primary-foreground: oklch(0.985 0.002 247.839);
-  --secondary: oklch(0.967 0.003 264.542);
-  --secondary-foreground: oklch(0.21 0.034 264.665);
-  --muted: oklch(0.967 0.003 264.542);
-  --muted-foreground: oklch(0.551 0.027 264.364);
-  --accent: oklch(0.967 0.003 264.542);
-  --accent-foreground: oklch(0.21 0.034 264.665);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.928 0.006 264.531);
-  --input: oklch(0.928 0.006 264.531);
-  --ring: oklch(0.707 0.022 261.325);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0.002 247.839);
-  --sidebar-foreground: oklch(0.13 0.028 261.692);
-  --sidebar-primary: oklch(0.21 0.034 264.665);
-  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-accent: oklch(0.967 0.003 264.542);
-  --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
-  --sidebar-border: oklch(0.928 0.006 264.531);
-  --sidebar-ring: oklch(0.707 0.022 261.325);
+  --paper: oklch(0.968 0.012 85);
+  --paper-sunk: oklch(0.935 0.014 85);
+  --ink: oklch(0.2 0.012 60);
+  --ink-muted: oklch(0.42 0.012 60);
+  --ink-faint: oklch(0.52 0.012 65);
+  --rule: oklch(0.2 0.012 60 / 0.18);
+  --line: oklch(0.2 0.012 60 / 0.5);
+  --mark: oklch(0.54 0.195 32);
+  --mark-ink: oklch(0.985 0.01 85);
+  --oxblood: oklch(0.42 0.15 25);
+
+  --page-max: 82rem;
+  --page-px: clamp(1rem, 4vw, 3rem);
+  --margin-md: 17rem;
+  --margin-lg: 22rem;
 }
 
 .dark {
-  --background: oklch(0.13 0.028 261.692);
-  --foreground: oklch(0.985 0.002 247.839);
-  --card: oklch(0.21 0.034 264.665);
-  --card-foreground: oklch(0.985 0.002 247.839);
-  --popover: oklch(0.21 0.034 264.665);
-  --popover-foreground: oklch(0.985 0.002 247.839);
-  --primary: oklch(0.928 0.006 264.531);
-  --primary-foreground: oklch(0.21 0.034 264.665);
-  --secondary: oklch(0.278 0.033 256.848);
-  --secondary-foreground: oklch(0.985 0.002 247.839);
-  --muted: oklch(0.278 0.033 256.848);
-  --muted-foreground: oklch(0.707 0.022 261.325);
-  --accent: oklch(0.278 0.033 256.848);
-  --accent-foreground: oklch(0.985 0.002 247.839);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.034 264.665);
-  --sidebar-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-accent: oklch(0.278 0.033 256.848);
-  --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --paper: oklch(0.175 0.008 60);
+  --paper-sunk: oklch(0.215 0.009 60);
+  --ink: oklch(0.935 0.01 85);
+  --ink-muted: oklch(0.76 0.01 80);
+  --ink-faint: oklch(0.66 0.01 80);
+  --rule: oklch(0.935 0.01 85 / 0.16);
+  --line: oklch(0.935 0.01 85 / 0.5);
+  --mark: oklch(0.7 0.17 36);
+  --mark-ink: oklch(0.18 0.01 60);
+  --oxblood: oklch(0.74 0.14 28);
+}
+
+@theme inline {
+  --font-sans: var(--font-vazirmatn), "Vazirmatn", system-ui, sans-serif;
+  --font-serif: var(--font-naskh), var(--font-vazirmatn), "Vazirmatn", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-card: var(--paper);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--paper);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--ink);
+  --color-primary-foreground: var(--paper);
+  --color-secondary: var(--paper-sunk);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--paper-sunk);
+  --color-muted-foreground: var(--ink-muted);
+  --color-faint: var(--ink-faint);
+  --color-accent: var(--paper-sunk);
+  --color-accent-foreground: var(--ink);
+  --color-destructive: var(--oxblood);
+  --color-destructive-foreground: var(--paper);
+  --color-border: var(--rule);
+  --color-input: var(--line);
+  --color-ring: var(--ink);
+  --color-mark: var(--mark);
+  --color-mark-foreground: var(--mark-ink);
+}
+
+@theme {
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --radius-3xl: 2px;
+
+  /* Persian type scale. Line-heights are generous: Naskh has tall marks. */
+  --text-display: clamp(3rem, 1.5rem + 6vw, 7.5rem);
+  --text-display--line-height: 1.2;
+  --text-headline: clamp(2.25rem, 1.4rem + 3.4vw, 4.5rem);
+  --text-headline--line-height: 1.25;
+  --text-title: clamp(1.75rem, 1.3rem + 1.6vw, 2.75rem);
+  --text-title--line-height: 1.35;
+  --text-subhead: clamp(1.25rem, 1.1rem + 0.6vw, 1.75rem);
+  --text-subhead--line-height: 1.5;
+  --text-deck: clamp(1.1875rem, 1.05rem + 0.5vw, 1.5rem);
+  --text-deck--line-height: 1.9;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 2.05;
+  --text-meta: 0.9375rem;
+  --text-meta--line-height: 1.7;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.6;
+  --text-numeral: clamp(5rem, 3.5rem + 5vw, 8rem);
+  --text-numeral--line-height: 1;
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground font-sans;
-    direction: rtl;
+    @apply border-border;
   }
   html {
-    direction: rtl;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    text-rendering: optimizeLegibility;
+    font-kerning: normal;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--mark) 28%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Page container: one width and one gutter everywhere. */
+  .page {
+    @apply mx-auto w-full;
+    max-width: var(--page-max);
+    padding-inline: var(--page-px);
+  }
+
+  /* Type roles. Serif for editorial titles, sans for everything else. */
+  .type-display {
+    @apply font-serif text-display font-bold;
+  }
+  .type-headline {
+    @apply font-serif text-headline font-bold;
+  }
+  .type-title {
+    @apply font-serif text-title font-bold;
+  }
+  .type-subhead {
+    @apply font-serif text-subhead font-bold;
+  }
+  .type-deck {
+    @apply font-serif text-deck font-medium;
+  }
+  .type-body {
+    @apply font-sans text-body;
+  }
+  .type-meta {
+    @apply font-sans text-meta;
+  }
+  .type-label {
+    @apply font-sans text-label font-medium text-muted-foreground;
+  }
+  .type-numeral {
+    @apply font-serif text-numeral font-bold;
+  }
+
+  /* A boxed label: category, tag. Rectangular, 1px, no fill. */
+  .tag {
+    @apply inline-flex items-center border border-input px-2 py-0.5 text-label;
+  }
+
+  /* Loading placeholder bars. */
+  .skeleton {
+    @apply bg-foreground/10;
+  }
+}
+
+/* Motion: everything is gated on no-preference. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes settle {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.pen {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 900ms var(--ease-out-quart) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+  }
+  .pen-intro {
+    animation: draw 1100ms var(--ease-out-quart) both;
+    animation-delay: calc(var(--i, 0) * 90ms + 400ms);
+  }
+  .page-enter {
+    animation: settle 420ms ease-out both;
+  }
+  .skeleton {
+    animation: breathe 1.6s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
