@@ -1,5 +1,6 @@
 import { formatDate } from "@/lib/formatDate";
 import { faNum, readingMinutes } from "@/lib/format";
+import { isLtr } from "@/lib/language";
 import { cn } from "@/lib/utils";
 import type { Article } from "@/types/article";
 
@@ -18,16 +19,28 @@ export function ArticleHeader({ article }: { article: Article }) {
     { label: "تاریخ انتشار", value: formatDate(article.createdAt) },
     { label: "زمان مطالعه", value: `${faNum(readingMinutes(article.content))} دقیقه` },
   ];
+  const titleIsLtr = isLtr(article.title);
 
   return (
     <header className="page pt-10 md:pt-16">
       <span className="tag">{article.category}</span>
-      <h1 className={cn(titleClass(article.title), "mt-6 max-w-5xl")}>{article.title}</h1>
+      <h1
+        dir={titleIsLtr ? "ltr" : undefined}
+        className={cn(
+          titleClass(article.title),
+          "mt-6 max-w-5xl",
+          titleIsLtr && "text-left",
+        )}
+      >
+        {article.title}
+      </h1>
       <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-foreground py-6 md:grid-cols-3 lg:grid-cols-5">
         {facts.map((fact) => (
           <div key={fact.label}>
             <dt className="type-label">{fact.label}</dt>
-            <dd className="type-meta font-medium">{fact.value}</dd>
+            <dd dir="auto" className="type-meta font-medium">
+              {fact.value}
+            </dd>
           </div>
         ))}
       </dl>

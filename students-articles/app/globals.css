@@ -167,6 +167,15 @@
     @apply font-serif text-numeral font-bold;
   }
 
+  /* Latin-script writing: Naskh's line-heights are tuned for Arabic marks,
+     so English paragraphs sit a touch tighter and stay left-aligned. */
+  .ltr-body {
+    line-height: 1.85;
+  }
+  .ltr-deck {
+    line-height: 1.7;
+  }
+
   /* A boxed label: category, tag. Rectangular, 1px, no fill. */
   .tag {
     @apply inline-flex items-center border border-input px-2 py-0.5 text-label;

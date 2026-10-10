@@ -45,6 +45,7 @@ export function TagInput({ name, defaultTags = [], max = 10 }: TagInputProps) {
         onBlur={commit}
         maxLength={MAX_TAG_LENGTH}
         disabled={tags.length >= max}
+        dir="auto"
         placeholder={
           tags.length >= max ? `حداکثر ${faNum(max)} برچسب` : "یک برچسب بنویسید و Enter بزنید"
         }
@@ -53,7 +54,7 @@ export function TagInput({ name, defaultTags = [], max = 10 }: TagInputProps) {
       {tags.length > 0 ? (
         <ul className="mt-3 flex flex-wrap gap-2" aria-label="برچسب‌های انتخاب‌شده">
           {tags.map((tag) => (
-            <li key={tag} className="tag type-meta gap-2 ps-3 pe-1">
+            <li key={tag} className="tag type-meta gap-2 ps-3 pe-1" dir="auto">
               <span>{tag}</span>
               <button
                 type="button"

@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { ArticleBody } from "@/components/article/ArticleBody";
 import { ScoreMark } from "@/components/editorial/ScoreMark";
 import { GradeForm } from "@/components/grades/GradeForm";
+import { isLtr } from "@/lib/language";
+import { cn } from "@/lib/utils";
 import { useGrades } from "@/store/gradeStore";
 
 export function ArticleDetails() {
@@ -36,16 +38,22 @@ export function ArticleDetails() {
   // Check if the current professor has already graded this article
   // Note: In a real app, this would come from server-side session data
   const hasGraded = false; // This will be determined server-side
+  const titleIsLtr = isLtr(selectedArticle.title);
 
   return (
     <div
       ref={panel}
       className="scroll-mt-6 lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)] lg:overflow-y-auto lg:pe-2"
     >
-      <p className="type-label">
+      <p dir="auto" className="type-label">
         {selectedArticle.author.fullName}، {selectedArticle.author.university}
       </p>
-      <h2 className="type-title mt-3">{selectedArticle.title}</h2>
+      <h2
+        dir={titleIsLtr ? "ltr" : undefined}
+        className={cn("type-title mt-3", titleIsLtr && "text-left")}
+      >
+        {selectedArticle.title}
+      </h2>
       <div className="mt-6">
         <ScoreMark
           score={graded ? selectedArticle.averageScore : null}

@@ -34,6 +34,7 @@ export function ArticleEditor({
             minLength={5}
             maxLength={200}
             required
+            dir="auto"
             className="h-auto py-3 font-serif text-title font-bold"
           />
         </Field>
@@ -66,6 +67,7 @@ export function ArticleEditor({
             minLength={100}
             maxLength={10000}
             required
+            dir="auto"
             className="min-h-96 leading-[2.05]"
           />
         </Field>

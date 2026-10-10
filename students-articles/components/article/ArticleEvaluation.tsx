@@ -1,6 +1,8 @@
 import { ScoreMark } from "@/components/editorial/ScoreMark";
 import { formatDate } from "@/lib/formatDate";
 import { faNum } from "@/lib/format";
+import { isLtr } from "@/lib/language";
+import { cn } from "@/lib/utils";
 import type { Article } from "@/types/article";
 
 type ArticleEvaluationProps = {
@@ -49,7 +51,7 @@ export function ArticleEvaluation({ article, action }: ArticleEvaluationProps) {
                 >
                   {faNum(i + 1)}
                 </span>
-                <span className="type-meta font-medium">
+                <span dir="auto" className="type-meta font-medium">
                   {grade.professor.fullName}
                 </span>
               </div>
@@ -57,7 +59,13 @@ export function ArticleEvaluation({ article, action }: ArticleEvaluationProps) {
                 <ScoreMark score={grade.score} size="md" />
               </div>
               {grade.comment ? (
-                <p className="type-body mt-3 whitespace-pre-line">
+                <p
+                  dir={isLtr(grade.comment) ? "ltr" : undefined}
+                  className={cn(
+                    "type-body mt-3 whitespace-pre-line",
+                    isLtr(grade.comment) && "text-left ltr-body",
+                  )}
+                >
                   {grade.comment}
                 </p>
               ) : null}

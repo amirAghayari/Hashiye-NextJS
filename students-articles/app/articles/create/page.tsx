@@ -55,6 +55,7 @@ export default function CreateArticlePage() {
                   maxLength={200}
                   required
                   placeholder="عنوان نوشته"
+                  dir="auto"
                   className="h-auto py-3 font-serif text-title font-bold"
                 />
               </Field>
@@ -84,6 +85,7 @@ export default function CreateArticlePage() {
                   minLength={100}
                   required
                   placeholder="متن کامل نوشته را اینجا بنویسید…"
+                  dir="auto"
                   className="min-h-96 leading-[2.05]"
                 />
               </Field>

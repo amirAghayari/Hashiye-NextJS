@@ -58,15 +58,12 @@ export async function login(
   };
 
   try {
-    console.log("Login attempt with data:", { email: data.email });
     const validatedData = UserSchema.login.parse(data);
 
     const result = await authenticateUser(
       validatedData.email,
       validatedData.password
     );
-
-    console.log("Authentication successful:", result.user?.email);
 
     const cookieStore = await cookies();
     cookieStore.set("auth-token", result.token, {
@@ -77,7 +74,6 @@ export async function login(
       path: "/",
     });
 
-    console.log("Cookie set, returning success");
     return { success: true, error: undefined, user: result.user };
   } catch (error: any) {
     return { success: false, error: error.message || "خطایی رخ داد" };

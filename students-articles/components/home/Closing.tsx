@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { AuthCtas } from "@/components/home/AuthCtas";
 import { Spread } from "@/components/editorial/Spread";
 import { MarginNote } from "@/components/editorial/MarginNote";
 
@@ -19,15 +18,7 @@ export function Closing() {
                 وقتشه ایده‌هات رو با دیگران به اشتراک بذاری.{" "}
               </h2>
               <div className="mt-10 flex flex-wrap items-center gap-6">
-                <Button asChild size="lg">
-                  <Link href="/auth/register">ثبت‌نام رایگان</Link>
-                </Button>
-                <Link
-                  href="/auth/login"
-                  className="inline-block py-3 type-meta underline underline-offset-8 decoration-1 hover:decoration-2"
-                >
-                  ورود به حساب
-                </Link>
+                <AuthCtas registerLabel="ثبت‌نام رایگان" />
               </div>
             </>
           }

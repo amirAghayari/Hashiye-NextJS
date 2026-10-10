@@ -38,6 +38,7 @@ export function GradeFields({
           name="comment"
           rows={5}
           maxLength={500}
+          dir="auto"
           className="min-h-36"
         />
       </Field>

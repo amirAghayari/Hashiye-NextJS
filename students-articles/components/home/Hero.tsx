@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { AuthCtas } from "@/components/home/AuthCtas";
 import { Spread } from "@/components/editorial/Spread";
 import { ScoreMark } from "@/components/editorial/ScoreMark";
 import { stagger } from "@/lib/utils";
@@ -30,15 +29,7 @@ export function Hero() {
                 className="rise mt-10 flex flex-wrap items-center gap-6"
                 style={stagger(4)}
               >
-                <Button asChild size="lg">
-                  <Link href="/auth/register">شروع به نوشتن</Link>
-                </Button>
-                <Link
-                  href="/auth/login"
-                  className="inline-block py-3 type-meta underline underline-offset-8 decoration-1 hover:decoration-2"
-                >
-                  ورود به حساب
-                </Link>
+                <AuthCtas />
               </div>
             </>
           }

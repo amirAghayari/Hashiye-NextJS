@@ -2,7 +2,8 @@ import Link from "next/link";
 import { ScoreMark } from "@/components/editorial/ScoreMark";
 import { ArticleByline } from "@/components/dashboard/ArticleByline";
 import { excerpt, faNum, readingMinutes } from "@/lib/format";
-import { stagger } from "@/lib/utils";
+import { isLtr } from "@/lib/language";
+import { cn, stagger } from "@/lib/utils";
 import type { Article } from "@/types/article";
 
 type ArticleRowProps = {
@@ -16,6 +17,8 @@ type ArticleRowProps = {
 /** One entry in the article index: number, title, byline, score. */
 export function ArticleRow({ article, number, index }: ArticleRowProps) {
   const graded = article.grades.length > 0;
+  const titleIsLtr = isLtr(article.title);
+  const excerptIsLtr = isLtr(article.content);
 
   return (
     <li className="rise" style={stagger(Math.min(index + 1, 8))}>
@@ -35,10 +38,22 @@ export function ArticleRow({ article, number, index }: ArticleRowProps) {
             <span className="tag">{article.category}</span>
             <span>{faNum(readingMinutes(article.content))} دقیقه مطالعه</span>
           </div>
-          <h3 className="type-subhead mt-3 underline decoration-transparent decoration-1 underline-offset-[0.25em] transition-colors duration-300 group-hover:decoration-foreground">
+          <h3
+            dir={titleIsLtr ? "ltr" : undefined}
+            className={cn(
+              "type-subhead mt-3 underline decoration-transparent decoration-1 underline-offset-[0.25em] transition-colors duration-300 group-hover:decoration-foreground",
+              titleIsLtr && "text-left",
+            )}
+          >
             {article.title}
           </h3>
-          <p className="type-meta mt-2 line-clamp-2 text-muted-foreground">
+          <p
+            dir={excerptIsLtr ? "ltr" : undefined}
+            className={cn(
+              "type-meta mt-2 line-clamp-2 text-muted-foreground",
+              excerptIsLtr && "text-left",
+            )}
+          >
             {excerpt(article.content, 150)}
           </p>
         </div>
